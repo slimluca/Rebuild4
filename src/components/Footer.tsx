@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { academyLinks, brand, navItems } from "@/lib/site";
 
@@ -11,11 +12,8 @@ export function Footer() {
   return (
     <footer className="site-footer">
       <div className="footer-brand">
-        <span className="footer-logo">MW</span>
-        <div>
-          <h2>{brand}</h2>
-          <p>Interfaccia 18+ per modelle live, discovery e candidatura creator.</p>
-        </div>
+        <Image className="footer-logo" src="/images/modelle-webcam-logo.png" alt={brand} width={260} height={87} />
+        <p>Interfaccia 18+ per modelle live, discovery e candidatura creator.</p>
       </div>
       <div className="footer-links">
         {[...navItems.slice(0, 5), ...academyLinks.slice(0, 3)].map((item) => (

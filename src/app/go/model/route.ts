@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server";
+import { getModelRedirectUrl, getVisitorGeoFromHeaders } from "@/lib/models";
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   const url = new URL(request.url);
-  const modelId = url.searchParams.get("id");
+  const performerId = url.searchParams.get("performerId") ?? url.searchParams.get("id");
   const fallback = new URL("/modelle-webcam/", request.url);
+  const visitorGeo = getVisitorGeoFromHeaders(request.headers);
+  const feedDestination = performerId ? await getModelRedirectUrl(performerId, visitorGeo.country, visitorGeo.region) : undefined;
+  if (feedDestination) return NextResponse.redirect(feedDestination);
+
   const template = process.env.MODEL_DESTINATION_URL;
 
   if (!template) return NextResponse.redirect(fallback);
 
-  const destination = modelId ? template.replace("{id}", encodeURIComponent(modelId)) : template;
+  const destination = performerId ? template.replace("{id}", encodeURIComponent(performerId)) : template;
   return NextResponse.redirect(destination);
 }

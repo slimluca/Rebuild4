@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
+export { getLiveModels, getVisitorGeoFromHeaders, type LiveModel } from "@/lib/models";
 
 export const siteUrl = "https://modellewebcam.com";
 export const brand = "Modelle Webcam";
 
 export const navItems = [
-  { href: "/modelle-webcam/", label: "Live" },
-  { href: "/modelle-webcam/", label: "Modelle" },
+  { href: "/modelle-online-ora/", label: "Online ora" },
+  { href: "/modelle-webcam/", label: "Categorie" },
   { href: "/diventare-webcam-model/", label: "Diventa model" },
   { href: "/privacy-webcam-model/", label: "Privacy" },
   { href: "/guadagni-webcam-model/", label: "Guadagni" },
-  { href: "/faq/", label: "FAQ" },
 ];
 
 export const academyLinks = [
@@ -356,47 +356,6 @@ export function pageMetadata(page: GuidePage): Metadata {
       type: "website",
     },
   };
-}
-
-export type LiveModel = {
-  id: string;
-  name: string;
-  age?: number;
-  country?: string;
-  image?: string;
-  status?: string;
-};
-
-export async function getLiveModels(): Promise<LiveModel[]> {
-  const endpoint = process.env.MODEL_API_URL || process.env.LIVEJASMIN_MODEL_API_URL;
-  if (!endpoint) return [];
-
-  try {
-    const response = await fetch(endpoint, { next: { revalidate: 180 } });
-    if (!response.ok) return [];
-    const data: unknown = await response.json();
-    const list = Array.isArray(data)
-      ? data
-      : Array.isArray((data as { models?: unknown }).models)
-        ? (data as { models: unknown[] }).models
-        : Array.isArray((data as { results?: unknown }).results)
-          ? (data as { results: unknown[] }).results
-          : [];
-
-    return list.slice(0, 12).map((item, index) => {
-      const record = item as Record<string, unknown>;
-      return {
-        id: String(record.id ?? record.modelId ?? record.username ?? index),
-        name: String(record.name ?? record.username ?? record.displayName ?? "Modella live"),
-        age: typeof record.age === "number" ? record.age : undefined,
-        country: typeof record.country === "string" ? record.country : undefined,
-        image: typeof record.image === "string" ? record.image : typeof record.avatar === "string" ? record.avatar : undefined,
-        status: typeof record.status === "string" ? record.status : "Online",
-      };
-    });
-  } catch {
-    return [];
-  }
 }
 
 export function faqSchema(faqs: typeof globalFaqs) {

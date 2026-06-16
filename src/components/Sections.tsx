@@ -1,15 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { GuidePage, GuideSection, LiveModel } from "@/lib/site";
+import type { ModelCategory } from "@/lib/model-categories";
+import { categories, getRelatedCategories } from "@/lib/model-categories";
 
 const filterLabels = ["Online ora", "Italiano", "Nuove", "Popolari", "Private", "HD"];
 
-const previewSlots = Array.from({ length: 20 }, (_, index) => ({
-  id: `slot-${index + 1}`,
-  label: `Slot live ${String(index + 1).padStart(2, "0")}`,
-  tag: index % 3 === 0 ? "Feed in attesa" : index % 3 === 1 ? "HD pronto" : "Profilo riservato",
-  tone: ["rose", "violet", "gold", "blue", "wine", "graphite"][index % 6],
-}));
+const discoveryShellItems = [
+  "Online ora",
+  "HD",
+  "Italiane",
+  "Nuove",
+  "Private",
+  "Mature",
+  "Bionde",
+  "Asiatiche",
+];
+
+const railSlugs = [
+  "modelle-online-ora",
+  "nuove-modelle-webcam",
+  "modelle-hd",
+  "modelle-italiane",
+  "modelle-bionde",
+  "modelle-asiatiche",
+  "modelle-in-chat-privata",
+  "modelle-mature",
+];
 
 export function ButtonRow({
   primaryHref = "/go/model-signup",
@@ -36,12 +53,11 @@ export function ButtonRow({
 
 export function PlatformTabs() {
   const tabs = [
-    ["Live", "/modelle-webcam/"],
-    ["Modelle", "/modelle-webcam/"],
+    ["Online ora", "/modelle-online-ora/"],
+    ["Categorie", "/modelle-webcam/"],
     ["Diventa model", "/diventare-webcam-model/"],
     ["Privacy", "/privacy-webcam-model/"],
     ["Guadagni", "/guadagni-webcam-model/"],
-    ["FAQ", "/faq/"],
   ];
 
   return (
@@ -65,6 +81,20 @@ export function FilterBar({ compact = false }: { compact?: boolean }) {
         </span>
       ))}
     </div>
+  );
+}
+
+export function CategoryChips({ activeSlug, limit }: { activeSlug?: string; limit?: number }) {
+  const visibleCategories = typeof limit === "number" ? categories.slice(0, limit) : categories;
+
+  return (
+    <nav className="category-chips" aria-label="Categorie modelle">
+      {visibleCategories.map((category) => (
+        <Link className={category.slug === activeSlug ? "active" : ""} href={category.canonicalPath} key={category.slug}>
+          {category.title.replace("Modelle webcam ", "").replace("Modelle ", "")}
+        </Link>
+      ))}
+    </nav>
   );
 }
 
@@ -92,17 +122,42 @@ export function Hero() {
   );
 }
 
-function ModelPlaceholder({ label, tag, tone }: { label: string; tag: string; tone: string }) {
+function DiscoveryShellItem({ label, index }: { label: string; index: number }) {
   return (
-    <Link className={`model-card preview-card ${tone}`} href="/go/live">
+    <div className="discovery-shell-item">
+      <span>{String(index + 1).padStart(2, "0")}</span>
+      <strong>{label}</strong>
+      <small>In attesa di profili coerenti</small>
+    </div>
+  );
+}
+
+function getModelImage(model: LiveModel): string | undefined {
+  return model.previewImage ?? model.image ?? model.thumbnail;
+}
+
+function modelMeta(model: LiveModel): string {
+  const parts = [model.country, model.isHd ? "HD" : undefined, model.isPrivate ? "Privata" : undefined].filter(Boolean);
+  return parts.length ? parts.join(" · ") : "Profilo 18+ dai dati live";
+}
+
+export function ModelTile({ model }: { model: LiveModel }) {
+  const image = getModelImage(model);
+  const modelParam = model.performerId ?? model.id;
+
+  return (
+    <Link className="model-card real" href={`/go/model?performerId=${encodeURIComponent(modelParam)}`}>
       <span className="model-visual">
-        <span className="avatar-glow" />
-        <span className="preview-name">{label.slice(-2)}</span>
+        {image ? (
+          <Image src={image} alt="" fill sizes="(max-width: 700px) 48vw, 280px" />
+        ) : (
+          <span className="preview-name">{model.name.slice(0, 1)}</span>
+        )}
       </span>
       <span className="model-overlay">
-        <span className="status-dot">Live</span>
-        <strong>{label}</strong>
-        <small>{tag}</small>
+        <span className="status-dot">{model.isOnline === false ? model.status ?? "Profilo" : model.status ?? "Live"}</span>
+        <strong>{model.name}</strong>
+        <small>{modelMeta(model)}</small>
       </span>
     </Link>
   );
@@ -112,16 +167,17 @@ export function ModelDiscovery({
   models,
   compact = false,
   page = false,
+  showCategories = false,
 }: {
   models: LiveModel[];
   compact?: boolean;
   page?: boolean;
+  showCategories?: boolean;
 }) {
   const targetCount = page ? 20 : 16;
   const visibleModels = models.slice(0, targetCount);
   const hasLiveFeed = visibleModels.length > 0;
-  const informationalSlots = hasLiveFeed ? 0 : 1;
-  const slots = previewSlots.slice(0, Math.max(0, targetCount - visibleModels.length - informationalSlots));
+  const shellItems = hasLiveFeed ? [] : discoveryShellItems;
 
   return (
     <section className={page ? "model-discovery page-discovery" : "model-discovery"}>
@@ -134,10 +190,14 @@ export function ModelDiscovery({
           Apri la pagina modelle
         </Link>
       </div>
-      <FilterBar compact={compact} />
+      {showCategories ? <CategoryChips /> : <FilterBar compact={compact} />}
       <div className={hasLiveFeed ? "model-grid" : "model-grid empty-shell"}>
         {visibleModels.map((model) => (
-          <Link className="model-card real" href={`/go/model?id=${encodeURIComponent(model.id)}`} key={model.id}>
+          <Link
+            className="model-card real"
+            href={`/go/model?performerId=${encodeURIComponent(model.performerId ?? model.id)}`}
+            key={model.id}
+          >
             <span className="model-visual">
               {model.image ? (
                 <Image src={model.image} alt="" fill sizes="(max-width: 700px) 48vw, 280px" />
@@ -152,16 +212,16 @@ export function ModelDiscovery({
             </span>
           </Link>
         ))}
-        {slots.map((slot) => (
-          <ModelPlaceholder key={slot.id} label={slot.label} tag={slot.tag} tone={slot.tone} />
+        {shellItems.map((label, index) => (
+          <DiscoveryShellItem key={label} label={label} index={index} />
         ))}
         {!hasLiveFeed ? (
           <div className="unavailable-panel">
-            <span>Anteprima live</span>
-            <h3>Anteprima live non disponibile</h3>
+            <span>Discovery live</span>
+            <h3>Profili live non disponibili ora</h3>
             <p>
-              Il feed esterno non sta restituendo profili in questo momento. La griglia resta pronta,
-              con filtri, accesso live e percorsi interni già configurati.
+              La piattaforma non riempie la griglia con profili casuali. Quando sono disponibili
+              modelle webcam coerenti, la discovery torna popolata con risultati reali.
             </p>
             <Link className="btn btn-primary" href="/go/live">
               Apri area live
@@ -177,6 +237,256 @@ export function ModelDiscovery({
         </div>
       ) : null}
     </section>
+  );
+}
+
+export function SmartDiscoveryRails() {
+  const rails = railSlugs
+    .map((slug) => categories.find((category) => category.slug === slug))
+    .filter((category): category is ModelCategory => Boolean(category));
+
+  return (
+    <section className="smart-rails">
+      <div className="rail-head">
+        <div>
+          <p className="eyebrow">Percorsi live</p>
+          <h2>Scopri per stile, disponibilità e formato</h2>
+        </div>
+        <Link className="text-link" href="/modelle-webcam/">
+          Tutte le modelle
+        </Link>
+      </div>
+      <div className="rail-track">
+        {rails.map((category, index) => (
+          <Link className="rail-pill" href={category.canonicalPath} key={category.slug}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{category.title.replace("Modelle webcam ", "").replace("Modelle ", "")}</strong>
+            <small>{category.badges.slice(0, 2).join(" · ")}</small>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function MatchFinder() {
+  const options = [
+    ["Cerco modelle online ora", "/modelle-online-ora/"],
+    ["Preferisco profili HD", "/modelle-hd/"],
+    ["Voglio scoprire nuove modelle", "/nuove-modelle-webcam/"],
+    ["Cerco modelle italiane", "/modelle-italiane/"],
+    ["Cerco categorie specifiche", "/modelle-webcam/"],
+    ["Voglio candidarmi come model", "/diventare-webcam-model/"],
+  ];
+
+  return (
+    <section className="match-finder">
+      <div>
+        <p className="eyebrow">Assistente discovery</p>
+        <h2>Trova il tuo stile live</h2>
+        <p>
+          Scegli un percorso rapido nella piattaforma 18+. I link aprono categorie reali o il percorso
+          creator, senza profili consigliati artificialmente.
+        </p>
+      </div>
+      <div className="match-options">
+        {options.map(([label, href]) => (
+          <Link href={href} key={label}>
+            {label}
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function AvailabilityPulse() {
+  return (
+    <section className="availability-pulse">
+      <div className="pulse-dot" aria-hidden="true" />
+      <p>
+        La disponibilità delle modelle webcam cambia durante la giornata. Le categorie sono pensate
+        per mostrare profili coerenti quando sono disponibili, senza riempire le pagine con risultati casuali.
+      </p>
+    </section>
+  );
+}
+
+export function CreatorBridge() {
+  return (
+    <section className="creator-bridge">
+      <div>
+        <p className="eyebrow">Creator bridge</p>
+        <h2>Vuoi passare dall&apos;altra parte dello schermo?</h2>
+      </div>
+      <p>
+        Per diventare webcam model in Italia parti da privacy separata, nome artistico, studio ordinato,
+        regole personali e una scelta consapevole prima di andare online.
+      </p>
+      <ButtonRow
+        primaryHref="/diventare-webcam-model/"
+        primaryLabel="Diventa webcam model"
+        secondaryHref="/diventare-camgirl/"
+        secondaryLabel="Scopri come iniziare"
+      />
+    </section>
+  );
+}
+
+export function CreatorReadinessStrip() {
+  const checks = ["18+", "Privacy separata", "Nome artistico", "Camera e luce", "Regole personali", "Orari realistici"];
+
+  return (
+    <section className="readiness-strip">
+      <div>
+        <p className="eyebrow">Pronto per iniziare?</p>
+        <h2>Checklist essenziale creator</h2>
+      </div>
+      <div className="readiness-track">
+        {checks.map((check) => (
+          <span key={check}>{check}</span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function StudioSetupStrip() {
+  const items = ["Camera", "Luce", "Audio", "Sfondo", "Connessione", "Comfort"];
+
+  return (
+    <section className="studio-strip">
+      <div>
+        <p className="eyebrow">Studio setup</p>
+        <h2>Attrezzatura essenziale, senza eccessi</h2>
+      </div>
+      <div className="studio-track">
+        {items.map((item) => (
+          <span key={item}>{item}</span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function EarningsRealityDashboard() {
+  const factors = ["Tempo online", "Qualità del profilo", "Comunicazione", "Costanza", "Lingua", "Limiti personali"];
+
+  return (
+    <section className="earnings-reality">
+      <div>
+        <p className="eyebrow">Dashboard aspettative</p>
+        <h2>Guadagni variabili, decisioni lucide</h2>
+        <p>
+          Lavorare in webcam da casa può richiedere tempo, confini e continuità. I risultati cambiano
+          in base a preparazione, piattaforma, presenza online e gestione personale.
+        </p>
+      </div>
+      <div className="reality-track">
+        {factors.map((factor) => (
+          <span key={factor}>{factor}</span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function CategoryDiscovery({ category, models }: { category: ModelCategory; models: LiveModel[] }) {
+  const hasModels = models.length > 0;
+  const hasLowInventory = hasModels && models.length < category.minimumModelCount;
+  const visibleModels = models.slice(0, 20);
+  const related = getRelatedCategories(category);
+  const extraPathways =
+    category.slug === "modelle-italiane"
+      ? [
+          ["Diventa webcam model", "/diventare-webcam-model/"],
+          ["Lavorare in webcam", "/lavorare-in-webcam/"],
+        ]
+      : [];
+
+  return (
+    <>
+      <section className="category-hero">
+        <div>
+          <p className="eyebrow">Discovery 18+</p>
+          <h1>{category.title}</h1>
+          <p>{category.intro}</p>
+        </div>
+        <div className="category-console">
+          <span>{models.length}</span>
+          <strong>profili coerenti</strong>
+          <p>Solo corrispondenze dai metadati disponibili.</p>
+        </div>
+      </section>
+
+      <CategoryChips activeSlug={category.slug} />
+      <AvailabilityPulse />
+
+      <section className="category-results">
+        <div className="discovery-head">
+          <div>
+            <p className="eyebrow">Dati live filtrati</p>
+            <h2>{hasModels ? "Profili disponibili" : "Disponibilità limitata"}</h2>
+            {hasLowInventory ? (
+              <p className="inventory-note">
+                Inventario ridotto in questo momento: mostriamo solo profili coerenti con la categoria,
+                senza aggiungere risultati generici.
+              </p>
+            ) : null}
+          </div>
+          <div className="badge-row">
+            {category.badges.map((badge) => (
+              <span key={badge}>{badge}</span>
+            ))}
+          </div>
+        </div>
+        {hasModels ? (
+          <div className="model-grid category-grid">
+            {visibleModels.map((model) => (
+              <ModelTile model={model} key={model.id} />
+            ))}
+          </div>
+        ) : (
+          <div className="premium-empty">
+            <span>Dati live in aggiornamento</span>
+            <h2>Nessun profilo coerente disponibile ora</h2>
+            <p>
+              Questa categoria non viene riempita con modelle generiche. Quando sono disponibili profili
+              con metadati coerenti, la griglia torna automaticamente popolata.
+            </p>
+            <div className="button-row">
+              <Link className="btn btn-primary" href="/modelle-webcam/">
+                Torna alla discovery
+              </Link>
+              <Link className="btn btn-secondary" href="/go/live">
+                Apri area live
+              </Link>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="related-categories">
+        <div>
+          <p className="eyebrow">Categorie vicine</p>
+          <h2>Continua a sfogliare</h2>
+        </div>
+        <div className="related-links">
+          {related.map((item) => (
+            <Link href={item.canonicalPath} key={item.slug}>
+              {item.title}
+            </Link>
+          ))}
+          {extraPathways.map(([label, href]) => (
+            <Link href={href} key={href}>
+              {label}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <CreatorBridge />
+    </>
   );
 }
 
@@ -336,6 +646,9 @@ function GuideNav({ sections }: { sections: GuideSection[] }) {
 
 export function GuideTemplate({ page }: { page: GuidePage }) {
   const isAcademy = page.slug === "academy";
+  const showReadiness = page.slug === "diventare-webcam-model";
+  const showStudio = page.slug === "attrezzatura-webcam-model";
+  const showEarnings = page.slug === "guadagni-webcam-model";
 
   return (
     <main>
@@ -360,6 +673,9 @@ export function GuideTemplate({ page }: { page: GuidePage }) {
           <p>{page.sections.length} moduli compatti</p>
         </div>
       </section>
+      {showReadiness ? <CreatorReadinessStrip /> : null}
+      {showStudio ? <StudioSetupStrip /> : null}
+      {showEarnings ? <EarningsRealityDashboard /> : null}
       <GuideNav sections={page.sections} />
       <section className="guide-dashboard">
         {page.sections.map((section, index) => (

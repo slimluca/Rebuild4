@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
-import { FilterBar, ModelDiscovery, PlatformTabs } from "@/components/Sections";
-import { breadcrumbSchema, getLiveModels, siteUrl } from "@/lib/site";
+import {
+  AvailabilityPulse,
+  CategoryChips,
+  CreatorBridge,
+  MatchFinder,
+  ModelDiscovery,
+  PlatformTabs,
+  SmartDiscoveryRails,
+} from "@/components/Sections";
+import { breadcrumbSchema, getLiveModels, getVisitorGeoFromHeaders, siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Modelle webcam online",
@@ -12,7 +21,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ModelleWebcamPage() {
-  const models = await getLiveModels();
+  const visitorGeo = getVisitorGeoFromHeaders(await headers());
+  const models = await getLiveModels(80, visitorGeo.country, visitorGeo.region);
 
   return (
     <main>
@@ -28,12 +38,16 @@ export default async function ModelleWebcamPage() {
           <p className="eyebrow">Browser live</p>
           <h1>Modelle webcam online</h1>
         </div>
-        <FilterBar compact />
+        <CategoryChips />
         <Link className="btn btn-primary" href="/go/live">
           Entra live
         </Link>
       </section>
-      <ModelDiscovery models={models} page />
+      <SmartDiscoveryRails />
+      <MatchFinder />
+      <AvailabilityPulse />
+      <ModelDiscovery models={models} page showCategories />
+      <CreatorBridge />
     </main>
   );
 }

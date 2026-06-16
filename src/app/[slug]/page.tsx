@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
-import { GuideTemplate } from "@/components/Sections";
+import { CategoryDiscovery, GuideTemplate, PlatformTabs } from "@/components/Sections";
+import { categories, getCategoryBySlug, getModelsByCategory } from "@/lib/model-categories";
 import {
   academyPage,
   breadcrumbSchema,
   faqSchema,
   globalFaqs,
   guidePages,
+  getLiveModels,
+  getVisitorGeoFromHeaders,
   legalPages,
   pageMetadata,
+  siteUrl,
   type GuidePage,
 } from "@/lib/site";
 
@@ -42,6 +47,7 @@ export async function generateStaticParams() {
   return [
     ...Object.keys(guidePages),
     ...Object.keys(legalPages),
+    ...categories.map((category) => category.slug),
     "academy",
     "faq",
   ].map((slug) => ({ slug }));
@@ -49,6 +55,31 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  const category = getCategoryBySlug(slug);
+  if (category) {
+    const visitorGeo = getVisitorGeoFromHeaders(await headers());
+    const models = getModelsByCategory(slug, await getLiveModels(80, visitorGeo.country, visitorGeo.region));
+    const indexable = models.length >= category.minimumModelCount;
+
+    return {
+      title: category.metaTitle,
+      description: category.metaDescription,
+      alternates: { canonical: `${siteUrl}${category.canonicalPath}` },
+      robots: {
+        index: indexable,
+        follow: true,
+      },
+      openGraph: {
+        title: category.metaTitle,
+        description: category.metaDescription,
+        url: `${siteUrl}${category.canonicalPath}`,
+        siteName: "Modelle Webcam",
+        locale: "it_IT",
+        type: "website",
+      },
+    };
+  }
+
   const page = findPage(slug);
   if (!page) return {};
   return pageMetadata(page);
@@ -56,6 +87,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicPage({ params }: PageProps) {
   const { slug } = await params;
+  const category = getCategoryBySlug(slug);
+  if (category) {
+    const visitorGeo = getVisitorGeoFromHeaders(await headers());
+    const models = getModelsByCategory(slug, await getLiveModels(80, visitorGeo.country, visitorGeo.region));
+
+    return (
+      <main>
+        <JsonLd
+          data={breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Modelle webcam online", path: "/modelle-webcam/" },
+            { name: category.title, path: category.canonicalPath },
+          ])}
+        />
+        <PlatformTabs />
+        <CategoryDiscovery category={category} models={models} />
+      </main>
+    );
+  }
+
   const page = findPage(slug);
   if (!page) notFound();
 

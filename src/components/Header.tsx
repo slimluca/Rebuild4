@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { brand, navItems } from "@/lib/site";
 
@@ -5,8 +6,14 @@ export function Header() {
   return (
     <header className="site-header">
       <Link className="brand-mark" href="/" aria-label="Homepage Modelle Webcam">
-        <span>MW</span>
-        <strong>{brand}</strong>
+        <Image
+          src="/images/modelle-webcam-logo.png"
+          alt={brand}
+          width={420}
+          height={140}
+          priority
+          sizes="(max-width: 480px) 220px, (max-width: 760px) 260px, (max-width: 1120px) 340px, 420px"
+        />
       </Link>
       <nav className="desktop-nav" aria-label="Navigazione principale">
         {navItems.map((item) => (
