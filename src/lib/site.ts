@@ -269,7 +269,7 @@ export const academyPage: GuidePage = {
   title: "Academy creator",
   description: "Dashboard compatta per preparare profilo, privacy, studio, presenza online e candidatura.",
   eyebrow: "Academy dashboard",
-  intro: "Moduli rapidi per passare da idea a profilo preparato, senza effetto blog.",
+  intro: "Moduli essenziali per passare da idea a profilo preparato, senza effetto blog.",
   ctaLabel: "Apri il percorso",
   ctaHref: "/diventare-webcam-model/",
   sections: [

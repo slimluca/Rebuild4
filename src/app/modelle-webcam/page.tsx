@@ -6,10 +6,10 @@ import {
   AvailabilityPulse,
   CategoryChips,
   CreatorBridge,
+  HubCategoryRails,
   MatchFinder,
   ModelDiscovery,
   PlatformTabs,
-  SmartDiscoveryRails,
 } from "@/components/Sections";
 import { breadcrumbSchema, getLiveModels, getVisitorGeoFromHeaders, siteUrl } from "@/lib/site";
 
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default async function ModelleWebcamPage() {
   const visitorGeo = getVisitorGeoFromHeaders(await headers());
-  const models = await getLiveModels(80, visitorGeo.country, visitorGeo.region);
+  const models = await getLiveModels(100, visitorGeo.country, visitorGeo.region, { gender: "f", clientIp: visitorGeo.clientIp });
 
   return (
     <main>
@@ -43,7 +43,7 @@ export default async function ModelleWebcamPage() {
           Entra live
         </Link>
       </section>
-      <SmartDiscoveryRails />
+      <HubCategoryRails />
       <MatchFinder />
       <AvailabilityPulse />
       <ModelDiscovery models={models} page showCategories />

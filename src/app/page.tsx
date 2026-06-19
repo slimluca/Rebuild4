@@ -9,12 +9,12 @@ import {
   FaqSection,
   FinalCta,
   Hero,
+  HomeCategoryRail,
   MatchFinder,
   ModelDiscovery,
   PlatformTabs,
   RecruitmentStrip,
   SafetyDashboard,
-  SmartDiscoveryRails,
   StudioSetupStrip,
   SignupFlow,
 } from "@/components/Sections";
@@ -22,7 +22,7 @@ import { breadcrumbSchema, faqSchema, getLiveModels, getVisitorGeoFromHeaders, g
 
 export default async function Home() {
   const visitorGeo = getVisitorGeoFromHeaders(await headers());
-  const models = await getLiveModels(80, visitorGeo.country, visitorGeo.region);
+  const models = await getLiveModels(80, visitorGeo.country, visitorGeo.region, { gender: "f", clientIp: visitorGeo.clientIp });
 
   return (
     <main>
@@ -31,7 +31,7 @@ export default async function Home() {
       <PlatformTabs />
       <Hero />
       <CategoryChips limit={8} />
-      <SmartDiscoveryRails />
+      <HomeCategoryRail />
       <MatchFinder />
       <AvailabilityPulse />
       <ModelDiscovery models={models} compact />

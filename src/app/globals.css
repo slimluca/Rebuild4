@@ -889,6 +889,22 @@ main {
   padding-bottom: 2px;
 }
 
+.hub-rails {
+  gap: 18px;
+}
+
+.hub-rail-group {
+  display: grid;
+  gap: 10px;
+}
+
+.hub-rail-group h3 {
+  margin: 0;
+  color: var(--gold);
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
 .smart-rails,
 .match-finder,
 .readiness-strip,

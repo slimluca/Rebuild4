@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
 import { CategoryDiscovery, GuideTemplate, PlatformTabs } from "@/components/Sections";
-import { categories, getCategoryBySlug, getModelsByCategory } from "@/lib/model-categories";
+import { categories, getCategoryBySlug, getCategoryModelOptions, getModelsByCategory } from "@/lib/model-categories";
 import {
   academyPage,
   breadcrumbSchema,
@@ -27,7 +27,7 @@ function findPage(slug: string): GuidePage | undefined {
       slug: "faq",
       title: "FAQ Modelle Webcam",
       description:
-        "Risposte rapide su 18+, privacy, guadagni, studio, iscrizione e sicurezza.",
+        "Risposte essenziali su 18+, privacy, guadagni, studio, iscrizione e sicurezza.",
       eyebrow: "FAQ",
       intro:
         "Domande essenziali per usare la piattaforma e valutare il percorso creator con controllo.",
@@ -58,7 +58,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const category = getCategoryBySlug(slug);
   if (category) {
     const visitorGeo = getVisitorGeoFromHeaders(await headers());
-    const models = getModelsByCategory(slug, await getLiveModels(80, visitorGeo.country, visitorGeo.region));
+    const models = getModelsByCategory(
+      slug,
+      await getLiveModels(100, visitorGeo.country, visitorGeo.region, {
+        ...getCategoryModelOptions(category),
+        clientIp: visitorGeo.clientIp,
+      })
+    );
     const indexable = models.length >= category.minimumModelCount;
 
     return {
@@ -90,7 +96,13 @@ export default async function DynamicPage({ params }: PageProps) {
   const category = getCategoryBySlug(slug);
   if (category) {
     const visitorGeo = getVisitorGeoFromHeaders(await headers());
-    const models = getModelsByCategory(slug, await getLiveModels(80, visitorGeo.country, visitorGeo.region));
+    const models = getModelsByCategory(
+      slug,
+      await getLiveModels(100, visitorGeo.country, visitorGeo.region, {
+        ...getCategoryModelOptions(category),
+        clientIp: visitorGeo.clientIp,
+      })
+    );
 
     return (
       <main>

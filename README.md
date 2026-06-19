@@ -22,8 +22,12 @@ npm run build
 The public UI uses internal `/go/*` routes for external destinations.
 
 ```bash
-MODEL_API_URL=
-LIVEJASMIN_MODEL_API_URL=
+MODEL_PROVIDER=chaturbate
+CHATURBATE_API_BASE_URL=https://chaturbate.com/api/public/affiliates/onlinerooms/
+CHATURBATE_WM=
+CHATURBATE_LIMIT=100
+CHATURBATE_FORMAT=json
+CHATURBATE_USE_REVSHARE=true
 LIVE_DESTINATION_URL=
 MODEL_DESTINATION_URL=
 MODEL_SIGNUP_URL=

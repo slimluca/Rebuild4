@@ -19,13 +19,71 @@ const discoveryShellItems = [
 
 const railSlugs = [
   "modelle-online-ora",
+  "modelle-disponibili-adesso",
   "nuove-modelle-webcam",
   "modelle-hd",
+  "modelle-popolari",
+  "modelle-private",
   "modelle-italiane",
   "modelle-bionde",
   "modelle-asiatiche",
-  "modelle-in-chat-privata",
-  "modelle-mature",
+];
+
+const hubRailGroups = [
+  {
+    title: "Live ora",
+    slugs: [
+      "modelle-online-ora",
+      "modelle-disponibili-adesso",
+      "modelle-hd",
+      "nuove-modelle-webcam",
+      "modelle-popolari",
+      "modelle-private",
+    ],
+  },
+  {
+    title: "Categorie",
+    slugs: [
+      "modelle-bionde",
+      "modelle-brune",
+      "modelle-asiatiche",
+      "modelle-latine",
+      "modelle-italiane",
+      "modelle-prosperose",
+      "modelle-curvy",
+      "modelle-tattoo",
+      "modelle-lingerie",
+      "modelle-cosplay",
+    ],
+  },
+  {
+    title: "Paesi e lingue",
+    slugs: [
+      "modelle-italiane",
+      "modelle-europee",
+      "modelle-latine",
+      "modelle-brasiliane",
+      "modelle-colombiane",
+      "modelle-spagnole",
+      "modelle-francesi",
+      "modelle-inglesi",
+      "modelle-multilingue",
+    ],
+  },
+];
+
+const homeCategorySlugs = [
+  "modelle-online-ora",
+  "modelle-hd",
+  "nuove-modelle-webcam",
+  "modelle-popolari",
+  "modelle-bionde",
+  "modelle-brune",
+  "modelle-asiatiche",
+  "modelle-italiane",
+  "modelle-prosperose",
+  "modelle-curvy",
+  "modelle-tattoo",
 ];
 
 export function ButtonRow({
@@ -141,12 +199,23 @@ function modelMeta(model: LiveModel): string {
   return parts.length ? parts.join(" · ") : "Profilo 18+ dai dati live";
 }
 
+function modelHref(model: LiveModel): string {
+  const modelParam = model.performerId ?? model.id;
+  const params = new URLSearchParams();
+  if (model.provider) params.set("provider", model.provider);
+  if (model.provider === "chaturbate") {
+    params.set("username", modelParam);
+  } else {
+    params.set("performerId", modelParam);
+  }
+  return `/go/model?${params.toString()}`;
+}
+
 export function ModelTile({ model }: { model: LiveModel }) {
   const image = getModelImage(model);
-  const modelParam = model.performerId ?? model.id;
 
   return (
-    <Link className="model-card real" href={`/go/model?performerId=${encodeURIComponent(modelParam)}`}>
+    <Link className="model-card real" href={modelHref(model)}>
       <span className="model-visual">
         {image ? (
           <Image src={image} alt="" fill sizes="(max-width: 700px) 48vw, 280px" />
@@ -193,11 +262,7 @@ export function ModelDiscovery({
       {showCategories ? <CategoryChips /> : <FilterBar compact={compact} />}
       <div className={hasLiveFeed ? "model-grid" : "model-grid empty-shell"}>
         {visibleModels.map((model) => (
-          <Link
-            className="model-card real"
-            href={`/go/model?performerId=${encodeURIComponent(model.performerId ?? model.id)}`}
-            key={model.id}
-          >
+          <Link className="model-card real" href={modelHref(model)} key={model.id}>
             <span className="model-visual">
               {model.image ? (
                 <Image src={model.image} alt="" fill sizes="(max-width: 700px) 48vw, 280px" />
@@ -208,7 +273,7 @@ export function ModelDiscovery({
             <span className="model-overlay">
               <span className="status-dot">{model.status ?? "Online"}</span>
               <strong>{model.name}</strong>
-              <small>{model.country ? `${model.country} · HD` : "HD · stanza privata"}</small>
+              <small>{modelMeta(model)}</small>
             </span>
           </Link>
         ))}
@@ -269,6 +334,70 @@ export function SmartDiscoveryRails() {
   );
 }
 
+export function HubCategoryRails() {
+  return (
+    <section className="smart-rails hub-rails">
+      <div className="rail-head">
+        <div>
+          <p className="eyebrow">Percorsi live</p>
+          <h2>Trova il tuo stile live</h2>
+        </div>
+        <Link className="text-link" href="/modelle-online-ora/">
+          Online ora
+        </Link>
+      </div>
+      {hubRailGroups.map((group) => {
+        const items = group.slugs
+          .map((slug) => categories.find((category) => category.slug === slug))
+          .filter((category): category is ModelCategory => Boolean(category));
+        return (
+          <div className="hub-rail-group" key={group.title}>
+            <h3>{group.title}</h3>
+            <div className="rail-track">
+              {items.map((category, index) => (
+                <Link className="rail-pill" href={category.canonicalPath} key={`${group.title}-${category.slug}`}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{category.title.replace("Modelle webcam ", "").replace("Modelle ", "")}</strong>
+                  <small>{category.badges.slice(0, 2).join(" Â· ")}</small>
+                </Link>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
+export function HomeCategoryRail() {
+  const items = homeCategorySlugs
+    .map((slug) => categories.find((category) => category.slug === slug))
+    .filter((category): category is ModelCategory => Boolean(category));
+
+  return (
+    <section className="smart-rails home-category-rail">
+      <div className="rail-head">
+        <div>
+          <p className="eyebrow">Categorie live</p>
+          <h2>Trova il tuo stile live</h2>
+        </div>
+        <Link className="text-link" href="/modelle-webcam/">
+          Tutte le categorie
+        </Link>
+      </div>
+      <div className="rail-track">
+        {items.map((category, index) => (
+          <Link className="rail-pill" href={category.canonicalPath} key={category.slug}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{category.title.replace("Modelle webcam ", "").replace("Modelle ", "")}</strong>
+            <small>{category.badges.slice(0, 2).join(" Â· ")}</small>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function MatchFinder() {
   const options = [
     ["Cerco modelle online ora", "/modelle-online-ora/"],
@@ -285,7 +414,7 @@ export function MatchFinder() {
         <p className="eyebrow">Assistente discovery</p>
         <h2>Trova il tuo stile live</h2>
         <p>
-          Scegli un percorso rapido nella piattaforma 18+. I link aprono categorie reali o il percorso
+          Scegli un percorso guidato nella piattaforma 18+. I link aprono categorie reali o il percorso
           creator, senza profili consigliati artificialmente.
         </p>
       </div>
@@ -602,7 +731,7 @@ export function FaqSection({ faqs }: { faqs: { question: string; answer: string 
     <section className="faq-section">
       <div className="section-title">
         <p className="eyebrow">FAQ</p>
-        <h2>Risposte rapide per decidere meglio</h2>
+        <h2>Risposte essenziali per decidere meglio</h2>
       </div>
       <div className="faq-list">
         {faqs.map((faq) => (
