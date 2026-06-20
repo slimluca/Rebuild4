@@ -302,4 +302,17 @@ export const guideInfoSections: Record<string, InfoSectionContent> = {
       { href: "/guadagni-webcam-model/", label: "Guadagni" },
     ],
   },
+  contatti: {
+    heading: "Contatti Modelle Webcam per richieste chiare e pertinenti",
+    paragraphs: [
+      "La pagina Contatti è dedicata a comunicazioni sul sito, sui contenuti informativi e sul funzionamento generale dei percorsi pubblici. Prima di scrivere, indica con precisione la pagina interessata e descrivi il problema o la richiesta in modo sintetico: un messaggio contestualizzato è più semplice da verificare e riceve una risposta più utile. Non inviare documenti d’identità, dati di pagamento, credenziali, indirizzi privati o altre informazioni sensibili. Per questioni relative a un account esterno, usa sempre i canali di assistenza ufficiali messi a disposizione dal servizio interessato.",
+      "Le segnalazioni tecniche possono riguardare collegamenti non funzionanti, testo poco leggibile, categorie incoerenti o problemi di visualizzazione da desktop e mobile. È utile specificare il dispositivo, il browser e il percorso della pagina, evitando di allegare materiale personale non necessario. Le richieste editoriali devono restare pertinenti al progetto e rispettare il carattere 18+ del sito. Questa casella non sostituisce assistenza legale, fiscale, medica o di sicurezza personale e non deve essere usata per trasmettere informazioni riservate.",
+      "Per dubbi frequenti su categorie live, privacy, attrezzatura, guadagni variabili o candidatura creator, consulta prima la sezione FAQ e i moduli dedicati. Le pagine informative spiegano quali dati vengono usati per organizzare le stanze, come mantenere separata l’identità personale e quali controlli valutare prima di registrarsi. Se la domanda resta aperta, invia un messaggio essenziale con un oggetto riconoscibile. Una comunicazione prudente protegge la tua privacy e permette di distinguere rapidamente una segnalazione sul sito da una richiesta che deve essere rivolta direttamente alla piattaforma competente.",
+    ],
+    links: [
+      { href: "/faq/", label: "FAQ" },
+      { href: "/privacy-policy/", label: "Privacy Policy" },
+      { href: "/termini/", label: "Termini" },
+    ],
+  },
 };
