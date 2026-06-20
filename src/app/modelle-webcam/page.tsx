@@ -3,14 +3,13 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import {
-  AvailabilityPulse,
   CategoryChips,
   CreatorBridge,
-  HubCategoryRails,
-  MatchFinder,
+  FullWidthInfoSection,
   ModelDiscovery,
   PlatformTabs,
 } from "@/components/Sections";
+import { webcamHubInfoSection } from "@/lib/info-sections";
 import { breadcrumbSchema, getLiveModels, getVisitorGeoFromHeaders, siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -38,15 +37,28 @@ export default async function ModelleWebcamPage() {
           <p className="eyebrow">Browser live</p>
           <h1>Modelle webcam online</h1>
         </div>
-        <CategoryChips />
+        <CategoryChips
+          slugs={[
+            "modelle-online-ora",
+            "modelle-hd",
+            "nuove-modelle-webcam",
+            "modelle-popolari",
+            "modelle-bionde",
+            "modelle-brune",
+            "modelle-asiatiche",
+            "modelle-italiane",
+            "modelle-prosperose",
+            "modelle-curvy",
+            "modelle-tattoo",
+            "modelle-lingerie",
+          ]}
+        />
         <Link className="btn btn-primary" href="/go/live">
           Entra live
         </Link>
       </section>
-      <HubCategoryRails />
-      <MatchFinder />
-      <AvailabilityPulse />
       <ModelDiscovery models={models} page showCategories />
+      <FullWidthInfoSection content={webcamHubInfoSection} />
       <CreatorBridge />
     </main>
   );

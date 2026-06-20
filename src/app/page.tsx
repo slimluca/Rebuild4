@@ -1,24 +1,16 @@
 import { headers } from "next/headers";
 import { JsonLd } from "@/components/JsonLd";
 import {
-  CategoryChips,
   AvailabilityPulse,
   CreatorBridge,
-  CreatorReadinessStrip,
-  EarningsConsole,
-  FaqSection,
-  FinalCta,
+  FullWidthInfoSection,
   Hero,
   HomeCategoryRail,
-  MatchFinder,
   ModelDiscovery,
   PlatformTabs,
-  RecruitmentStrip,
-  SafetyDashboard,
-  StudioSetupStrip,
-  SignupFlow,
 } from "@/components/Sections";
-import { breadcrumbSchema, faqSchema, getLiveModels, getVisitorGeoFromHeaders, globalFaqs } from "@/lib/site";
+import { homeInfoSection } from "@/lib/info-sections";
+import { breadcrumbSchema, getLiveModels, getVisitorGeoFromHeaders } from "@/lib/site";
 
 export default async function Home() {
   const visitorGeo = getVisitorGeoFromHeaders(await headers());
@@ -27,23 +19,13 @@ export default async function Home() {
   return (
     <main>
       <JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }])} />
-      <JsonLd data={faqSchema(globalFaqs.slice(0, 4))} />
       <PlatformTabs />
       <Hero />
-      <CategoryChips limit={8} />
-      <HomeCategoryRail />
-      <MatchFinder />
-      <AvailabilityPulse />
       <ModelDiscovery models={models} compact />
+      <HomeCategoryRail />
+      <FullWidthInfoSection content={homeInfoSection} />
       <CreatorBridge />
-      <RecruitmentStrip />
-      <CreatorReadinessStrip />
-      <SignupFlow />
-      <SafetyDashboard />
-      <StudioSetupStrip />
-      <EarningsConsole />
-      <FaqSection faqs={globalFaqs.slice(0, 4)} />
-      <FinalCta />
+      <AvailabilityPulse />
     </main>
   );
 }

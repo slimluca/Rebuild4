@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ModelCardImage } from "@/components/ModelCardImage";
 import type { GuidePage, GuideSection, LiveModel } from "@/lib/site";
 import type { ModelCategory } from "@/lib/model-categories";
-import { categories, getRelatedCategories } from "@/lib/model-categories";
+import { categories } from "@/lib/model-categories";
+import { categoryInfoSections, guideInfoSections, type InfoSectionContent } from "@/lib/info-sections";
 
 const filterLabels = ["Online ora", "Italiano", "Nuove", "Popolari", "Private", "HD"];
 
@@ -84,7 +86,103 @@ const homeCategorySlugs = [
   "modelle-prosperose",
   "modelle-curvy",
   "modelle-tattoo",
+  "modelle-lingerie",
 ];
+
+const categoryDiscoveryGroups = [
+  {
+    title: "Live ora",
+    slugs: [
+      "modelle-online-ora",
+      "modelle-hd",
+      "nuove-modelle-webcam",
+      "modelle-popolari",
+      "modelle-private",
+      "modelle-in-chat-pubblica",
+      "modelle-in-gruppo",
+    ],
+  },
+  {
+    title: "Categorie popolari",
+    slugs: [
+      "modelle-webcam",
+      "ragazze-live",
+      "camgirl-online",
+      "modelle-con-preview-live",
+      "modelle-live-cam",
+      "coppie-webcam",
+      "modelle-trans",
+    ],
+  },
+  {
+    title: "Aspetto e stile",
+    slugs: [
+      "modelle-bionde",
+      "modelle-brune",
+      "modelle-prosperose",
+      "modelle-curvy",
+      "modelle-tattoo",
+      "modelle-lingerie",
+      "modelle-mature",
+      "modelle-petite",
+    ],
+  },
+  {
+    title: "Paesi e lingue",
+    slugs: [
+      "modelle-italiane",
+      "modelle-europee",
+      "modelle-asiatiche",
+      "modelle-latine",
+      "modelle-brasiliane",
+      "modelle-colombiane",
+      "modelle-spagnole",
+      "modelle-inglesi",
+    ],
+  },
+  {
+    title: "Esperienze live",
+    slugs: [
+      "modelle-glamour",
+      "modelle-eleganti",
+      "modelle-premium",
+      "modelle-cosplay",
+      "modelle-cosplay-live",
+      "modelle-bdsm",
+      "modelle-roleplay",
+      "modelle-gaming",
+    ],
+  },
+];
+
+function titleCaseFirst(value: string): string {
+  if (!value) return value;
+  return value.charAt(0).toLocaleUpperCase("it-IT") + value.slice(1);
+}
+
+function categoryLabel(category: ModelCategory): string {
+  const explicitLabels: Record<string, string> = {
+    "modelle-webcam": "Modelle webcam",
+    "modelle-online-ora": "Online ora",
+    "modelle-hd": "HD",
+    "nuove-modelle-webcam": "Nuove modelle",
+    "modelle-18-plus": "18 Plus",
+    "modelle-20-plus": "20 Plus",
+    "modelle-30-plus": "30 Plus",
+    "modelle-40-plus": "40 Plus",
+    "modelle-50-plus": "50 Plus",
+    "modelle-bdsm": "BDSM",
+  };
+  if (explicitLabels[category.slug]) return explicitLabels[category.slug];
+  const shortened = category.title.replace(/^Modelle webcam\s+/i, "").replace(/^Modelle\s+/i, "");
+  return titleCaseFirst(shortened.replace(/\bplus\b/g, "Plus"));
+}
+
+function categoriesFromSlugs(slugs: string[]): ModelCategory[] {
+  return slugs
+    .map((slug) => categories.find((category) => category.slug === slug))
+    .filter((category): category is ModelCategory => Boolean(category));
+}
 
 export function ButtonRow({
   primaryHref = "/go/model-signup",
@@ -142,17 +240,45 @@ export function FilterBar({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export function CategoryChips({ activeSlug, limit }: { activeSlug?: string; limit?: number }) {
-  const visibleCategories = typeof limit === "number" ? categories.slice(0, limit) : categories;
+export function CategoryChips({
+  activeSlug,
+  limit,
+  slugs,
+}: {
+  activeSlug?: string;
+  limit?: number;
+  slugs?: string[];
+}) {
+  const sourceCategories = slugs ? categoriesFromSlugs(slugs) : categories;
+  const visibleCategories = typeof limit === "number" ? sourceCategories.slice(0, limit) : sourceCategories;
 
   return (
     <nav className="category-chips" aria-label="Categorie modelle">
       {visibleCategories.map((category) => (
         <Link className={category.slug === activeSlug ? "active" : ""} href={category.canonicalPath} key={category.slug}>
-          {category.title.replace("Modelle webcam ", "").replace("Modelle ", "")}
+          {categoryLabel(category)}
         </Link>
       ))}
     </nav>
+  );
+}
+
+export function CategoryGroupPanel({ activeSlug, compact = false }: { activeSlug?: string; compact?: boolean }) {
+  return (
+    <section className={compact ? "category-panel compact" : "category-panel"} aria-label="Categorie modelle">
+      {categoryDiscoveryGroups.map((group) => (
+        <div className="category-panel-group" key={group.title}>
+          <h3>{group.title}</h3>
+          <div className="category-panel-links">
+            {categoriesFromSlugs(group.slugs).map((category) => (
+              <Link className={category.slug === activeSlug ? "active" : ""} href={category.canonicalPath} key={category.slug}>
+                {categoryLabel(category)}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
   );
 }
 
@@ -199,6 +325,15 @@ function modelMeta(model: LiveModel): string {
   return parts.length ? parts.join(" · ") : "Profilo 18+ dai dati live";
 }
 
+function modelStatusLabel(model: LiveModel): string {
+  const status = model.status?.toLowerCase();
+  if (status === "private") return "Privata";
+  if (status === "group") return "Gruppo";
+  if (status === "public") return "Live";
+  if (model.isOnline === false) return "Profilo";
+  return "Live";
+}
+
 function modelHref(model: LiveModel): string {
   const modelParam = model.performerId ?? model.id;
   const params = new URLSearchParams();
@@ -213,18 +348,19 @@ function modelHref(model: LiveModel): string {
 
 export function ModelTile({ model }: { model: LiveModel }) {
   const image = getModelImage(model);
+  if (!image) return null;
 
   return (
     <Link className="model-card real" href={modelHref(model)}>
       <span className="model-visual">
-        {image ? (
-          <Image src={image} alt="" fill sizes="(max-width: 700px) 48vw, 280px" />
-        ) : (
-          <span className="preview-name">{model.name.slice(0, 1)}</span>
-        )}
+        <ModelCardImage src={image} name={model.name} />
       </span>
-      <span className="model-overlay">
-        <span className="status-dot">{model.isOnline === false ? model.status ?? "Profilo" : model.status ?? "Live"}</span>
+      <span className="model-badges">
+        <span>{modelStatusLabel(model)}</span>
+        {model.isHd ? <span>HD</span> : null}
+        {model.isNew ? <span>New</span> : null}
+      </span>
+      <span className="model-summary">
         <strong>{model.name}</strong>
         <small>{modelMeta(model)}</small>
       </span>
@@ -243,8 +379,8 @@ export function ModelDiscovery({
   page?: boolean;
   showCategories?: boolean;
 }) {
-  const targetCount = page ? 20 : 16;
-  const visibleModels = models.slice(0, targetCount);
+  const targetCount = 20;
+  const visibleModels = models.filter((model) => Boolean(getModelImage(model))).slice(0, targetCount);
   const hasLiveFeed = visibleModels.length > 0;
   const shellItems = hasLiveFeed ? [] : discoveryShellItems;
 
@@ -259,19 +395,19 @@ export function ModelDiscovery({
           Apri la pagina modelle
         </Link>
       </div>
-      {showCategories ? <CategoryChips /> : <FilterBar compact={compact} />}
+      {showCategories ? <CategoryGroupPanel compact /> : <FilterBar compact={compact} />}
       <div className={hasLiveFeed ? "model-grid" : "model-grid empty-shell"}>
         {visibleModels.map((model) => (
           <Link className="model-card real" href={modelHref(model)} key={model.id}>
             <span className="model-visual">
-              {model.image ? (
-                <Image src={model.image} alt="" fill sizes="(max-width: 700px) 48vw, 280px" />
-              ) : (
-                <span className="preview-name">{model.name.slice(0, 1)}</span>
-              )}
+              <ModelCardImage src={getModelImage(model) as string} name={model.name} />
             </span>
-            <span className="model-overlay">
-              <span className="status-dot">{model.status ?? "Online"}</span>
+            <span className="model-badges">
+              <span>{modelStatusLabel(model)}</span>
+              {model.isHd ? <span>HD</span> : null}
+              {model.isNew ? <span>New</span> : null}
+            </span>
+            <span className="model-summary">
               <strong>{model.name}</strong>
               <small>{modelMeta(model)}</small>
             </span>
@@ -325,8 +461,8 @@ export function SmartDiscoveryRails() {
         {rails.map((category, index) => (
           <Link className="rail-pill" href={category.canonicalPath} key={category.slug}>
             <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{category.title.replace("Modelle webcam ", "").replace("Modelle ", "")}</strong>
-            <small>{category.badges.slice(0, 2).join(" · ")}</small>
+            <strong>{categoryLabel(category)}</strong>
+            <small>{category.badges.slice(0, 2).join(" • ")}</small>
           </Link>
         ))}
       </div>
@@ -357,8 +493,8 @@ export function HubCategoryRails() {
               {items.map((category, index) => (
                 <Link className="rail-pill" href={category.canonicalPath} key={`${group.title}-${category.slug}`}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
-                  <strong>{category.title.replace("Modelle webcam ", "").replace("Modelle ", "")}</strong>
-                  <small>{category.badges.slice(0, 2).join(" Â· ")}</small>
+                  <strong>{categoryLabel(category)}</strong>
+                  <small>{category.badges.slice(0, 2).join(" • ")}</small>
                 </Link>
               ))}
             </div>
@@ -386,14 +522,41 @@ export function HomeCategoryRail() {
         </Link>
       </div>
       <div className="rail-track">
-        {items.map((category, index) => (
-          <Link className="rail-pill" href={category.canonicalPath} key={category.slug}>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{category.title.replace("Modelle webcam ", "").replace("Modelle ", "")}</strong>
-            <small>{category.badges.slice(0, 2).join(" Â· ")}</small>
-          </Link>
+        {items.map((category, index) => {
+          const badges = category.badges.slice(0, 2).join(" • ");
+
+          return (
+            <Link className="rail-pill" href={category.canonicalPath} key={category.slug}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <strong>{categoryLabel(category)}</strong>
+              <small>{badges}</small>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+export function FullWidthInfoSection({ content }: { content: InfoSectionContent }) {
+  return (
+    <section className="full-width-info">
+      <h2>{content.heading}</h2>
+      <div className="full-width-info-copy">
+        {content.paragraphs.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
         ))}
       </div>
+      {content.links?.length ? (
+        <nav className="full-width-info-links" aria-label="Approfondimenti correlati">
+          <span>Esplora anche</span>
+          {content.links.map((link) => (
+            <Link href={link.href} key={link.href}>
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
     </section>
   );
 }
@@ -442,20 +605,26 @@ export function AvailabilityPulse() {
 }
 
 export function CreatorBridge() {
+  const checks = ["18+", "Privacy", "Profilo", "Studio", "Regole"];
+
   return (
     <section className="creator-bridge">
       <div>
         <p className="eyebrow">Creator bridge</p>
-        <h2>Vuoi passare dall&apos;altra parte dello schermo?</h2>
+        <h2>Vuoi diventare webcam model?</h2>
       </div>
-      <p>
-        Per diventare webcam model in Italia parti da privacy separata, nome artistico, studio ordinato,
-        regole personali e una scelta consapevole prima di andare online.
-      </p>
+      <div className="creator-bridge-copy">
+        <p>Prepara profilo, privacy, studio e regole personali prima di andare online.</p>
+        <div className="creator-checks" aria-label="Checklist creator">
+          {checks.map((check) => (
+            <span key={check}>{check}</span>
+          ))}
+        </div>
+      </div>
       <ButtonRow
-        primaryHref="/diventare-webcam-model/"
+        primaryHref="/go/model-signup"
         primaryLabel="Diventa webcam model"
-        secondaryHref="/diventare-camgirl/"
+        secondaryHref="/diventare-webcam-model/"
         secondaryLabel="Scopri come iniziare"
       />
     </section>
@@ -524,14 +693,6 @@ export function CategoryDiscovery({ category, models }: { category: ModelCategor
   const hasModels = models.length > 0;
   const hasLowInventory = hasModels && models.length < category.minimumModelCount;
   const visibleModels = models.slice(0, 20);
-  const related = getRelatedCategories(category);
-  const extraPathways =
-    category.slug === "modelle-italiane"
-      ? [
-          ["Diventa webcam model", "/diventare-webcam-model/"],
-          ["Lavorare in webcam", "/lavorare-in-webcam/"],
-        ]
-      : [];
 
   return (
     <>
@@ -541,20 +702,13 @@ export function CategoryDiscovery({ category, models }: { category: ModelCategor
           <h1>{category.title}</h1>
           <p>{category.intro}</p>
         </div>
-        <div className="category-console">
-          <span>{models.length}</span>
-          <strong>profili coerenti</strong>
-          <p>Solo corrispondenze dai metadati disponibili.</p>
-        </div>
       </section>
 
-      <CategoryChips activeSlug={category.slug} />
-      <AvailabilityPulse />
+      <CategoryChips activeSlug={category.slug} slugs={category.related} />
 
       <section className="category-results">
         <div className="discovery-head">
           <div>
-            <p className="eyebrow">Dati live filtrati</p>
             <h2>{hasModels ? "Profili disponibili" : "Disponibilità limitata"}</h2>
             {hasLowInventory ? (
               <p className="inventory-note">
@@ -595,24 +749,9 @@ export function CategoryDiscovery({ category, models }: { category: ModelCategor
         )}
       </section>
 
-      <section className="related-categories">
-        <div>
-          <p className="eyebrow">Categorie vicine</p>
-          <h2>Continua a sfogliare</h2>
-        </div>
-        <div className="related-links">
-          {related.map((item) => (
-            <Link href={item.canonicalPath} key={item.slug}>
-              {item.title}
-            </Link>
-          ))}
-          {extraPathways.map(([label, href]) => (
-            <Link href={href} key={href}>
-              {label}
-            </Link>
-          ))}
-        </div>
-      </section>
+      {categoryInfoSections[category.slug] ? (
+        <FullWidthInfoSection content={categoryInfoSections[category.slug]} />
+      ) : null}
 
       <CreatorBridge />
     </>
@@ -796,16 +935,12 @@ export function GuideTemplate({ page }: { page: GuidePage }) {
             />
           ) : null}
         </div>
-        <div className="progress-widget">
-          <span>18+</span>
-          <strong>{isAcademy ? "Academy dashboard" : "Creator module"}</strong>
-          <p>{page.sections.length} moduli compatti</p>
-        </div>
       </section>
       {showReadiness ? <CreatorReadinessStrip /> : null}
       {showStudio ? <StudioSetupStrip /> : null}
       {showEarnings ? <EarningsRealityDashboard /> : null}
       <GuideNav sections={page.sections} />
+      {guideInfoSections[page.slug] ? <FullWidthInfoSection content={guideInfoSections[page.slug]} /> : null}
       <section className="guide-dashboard">
         {page.sections.map((section, index) => (
           <article className="guide-module" id={`section-${index + 1}`} key={`${section.title}-${index}`}>

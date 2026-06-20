@@ -13,25 +13,34 @@ export function Footer() {
     <footer className="site-footer">
       <div className="footer-brand">
         <Image className="footer-logo" src="/images/modelle-webcam-logo.png" alt={brand} width={260} height={87} />
-        <p>Interfaccia 18+ per modelle live, discovery e candidatura creator.</p>
+        <p>Discovery live e percorso creator in un ambiente 18+ curato.</p>
       </div>
-      <div className="footer-links">
-        {[...navItems.slice(0, 5), ...academyLinks.slice(0, 3)].map((item) => (
+      <div className="footer-column footer-main-links">
+        <strong>Esplora</strong>
+        {navItems.map((item) => (
           <Link href={item.href} key={`${item.href}-${item.label}`}>
             {item.label}
           </Link>
         ))}
       </div>
-      <div className="friend-sites">
-        <span>Siti amici</span>
+      <div className="footer-column footer-creator-links">
+        <strong>Creator</strong>
+        {academyLinks.slice(0, 4).map((item) => (
+          <Link href={item.href} key={`${item.href}-${item.label}`}>
+            {item.label}
+          </Link>
+        ))}
+      </div>
+      <div className="footer-column friend-sites">
+        <strong>Siti amici</strong>
         {friendSites.map((site) => (
           <a href={site.href} key={site.href} target="_blank" rel="noopener noreferrer">
             {site.label}
           </a>
         ))}
       </div>
-      <div className="footer-legal">
-        <span>Solo adulti 18+</span>
+      <div className="footer-column footer-legal">
+        <strong>Solo adulti 18+</strong>
         <Link href="/privacy-policy/">Privacy</Link>
         <Link href="/termini/">Termini</Link>
         <Link href="/disclaimer/">Disclaimer</Link>

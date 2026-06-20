@@ -72,6 +72,27 @@ function normalizeToken(value: unknown): string {
     .trim();
 }
 
+function sanitizeDisplayName(value: string | undefined, fallback: string): string {
+  const cleaned = (value ?? "")
+    .replace(/https?:\/\/\S+/gi, "")
+    .replace(/\b(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/\S*)?/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return cleaned || fallback;
+}
+
+function validImageUrl(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:") return undefined;
+    if (!/\.(?:jpg|jpeg|png|webp)(?:$|\?)/i.test(url.pathname)) return undefined;
+    return url.toString();
+  } catch {
+    return undefined;
+  }
+}
+
 function splitLanguages(value: unknown): string[] {
   if (Array.isArray(value)) return value.map(String).map((item) => item.trim()).filter(Boolean);
   if (typeof value !== "string") return [];
@@ -137,18 +158,21 @@ function normalizeChaturbateRoom(item: unknown): LiveModel | undefined {
     shouldUseRevshareUrl() && firstString(record, ["chat_room_url_revshare"])
       ? firstString(record, ["chat_room_url_revshare"])
       : firstString(record, ["chat_room_url"]);
+  const image = validImageUrl(firstString(record, ["image_url_360x270"])) ?? validImageUrl(firstString(record, ["image_url"]));
+
+  if (!image) return undefined;
 
   return {
     provider: "chaturbate",
     id: username,
     performerId: username,
-    name: firstString(record, ["display_name"]) ?? username,
+    name: sanitizeDisplayName(firstString(record, ["display_name"]), username),
     slug: username,
     profileUrl: `/go/model?provider=chaturbate&username=${encodeURIComponent(username)}`,
     chatRoomUrl,
-    image: firstString(record, ["image_url_360x270", "image_url"]),
-    thumbnail: firstString(record, ["image_url_360x270", "image_url"]),
-    previewImage: firstString(record, ["image_url_360x270", "image_url"]),
+    image,
+    thumbnail: image,
+    previewImage: image,
     tags,
     categories: tags,
     gender: firstString(record, ["gender"]),
