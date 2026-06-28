@@ -6,8 +6,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/go/"],
+      disallow: "/go/",
     },
     sitemap: `${siteUrl}/sitemap.xml`,
+    host: "modellewebcam.com",
   };
 }

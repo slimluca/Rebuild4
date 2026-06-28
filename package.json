@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "audit:migration-canonical": "node scripts/audit-migration-canonical.mjs",
+    "check:index": "node scripts/audit-index-cleanup.mjs"
   },
   "dependencies": {
     "next": "16.2.9",
