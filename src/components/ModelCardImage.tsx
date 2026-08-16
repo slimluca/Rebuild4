@@ -1,8 +1,10 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useState } from "react";
 
-export function ModelCardImage({ src, name }: { src: string; name: string }) {
+export function ModelCardImage({ src, name, priority = false }: { src: string; name: string; priority?: boolean }) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
@@ -14,6 +16,16 @@ export function ModelCardImage({ src, name }: { src: string; name: string }) {
   }
 
   // Chaturbate thumbnails need native image error handling to avoid broken cards.
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />;
+  return (
+    <img
+      src={src}
+      alt={`Anteprima webcam live di ${name}`}
+      width={360}
+      height={270}
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
+  );
 }

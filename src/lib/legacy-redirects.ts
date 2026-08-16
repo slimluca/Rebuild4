@@ -35,6 +35,11 @@ export const directLegacyRedirects: Record<string, string> = {
   "/coppie-webcam": "/coppie-webcam/",
   "/ragazze-live": "/ragazze-live/",
   "/camgirl-online": "/camgirl-online/",
+  "/modelle-disponibili-adesso": "/modelle-online-ora/",
+  "/modelle-live-cam": "/modelle-online-ora/",
+  "/modelle-in-videochat": "/modelle-online-ora/",
+  "/modelle-in-chat-privata": "/modelle-private/",
+  "/modelle-cosplay-live": "/modelle-cosplay/",
 };
 
 export const currentPublicPaths = new Set([

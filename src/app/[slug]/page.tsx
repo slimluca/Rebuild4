@@ -57,24 +57,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const category = getCategoryBySlug(slug);
   if (category) {
-    const visitorGeo = getVisitorGeoFromHeaders(await headers());
-    const models = getModelsByCategory(
-      slug,
-      await getLiveModels(100, visitorGeo.country, visitorGeo.region, {
-        ...getCategoryModelOptions(category),
-        clientIp: visitorGeo.clientIp,
-      })
-    );
-    const indexable = models.length >= category.minimumModelCount;
-
     return {
       title: category.metaTitle,
       description: category.metaDescription,
       alternates: { canonical: `${siteUrl}${category.canonicalPath}` },
       robots: {
-        index: indexable,
+        index: category.seoIndexable,
         follow: true,
       },
+      other: { rating: "adult" },
       openGraph: {
         title: category.metaTitle,
         description: category.metaDescription,

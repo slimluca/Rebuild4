@@ -19,17 +19,14 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "Modelle Webcam Italia | Live e Creator Platform 18+",
-    template: `%s | ${brand}`,
-  },
+  title: "Modelle webcam live online con profili e categorie",
   description:
-    "Piattaforma italiana 18+ per modelle live, discovery premium e candidatura creator con privacy, setup e aspettative realistiche.",
+    "Scopri modelle webcam online con anteprime live, profili HD, nuove camgirl e categorie aggiornate per trovare stanze disponibili in modo rapido e discreto.",
   alternates: { canonical: siteUrl },
   openGraph: {
-    title: "Modelle Webcam Italia | Live e Creator Platform 18+",
+    title: "Modelle webcam live online con profili e categorie",
     description:
-      "Discovery premium, modelle live e candidatura creator in un'interfaccia 18+ moderna.",
+      "Scopri modelle webcam online con anteprime live, profili HD, nuove camgirl e categorie aggiornate per trovare stanze disponibili in modo rapido e discreto.",
     url: siteUrl,
     siteName: brand,
     locale: "it_IT",

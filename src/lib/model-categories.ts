@@ -3,6 +3,155 @@ import type { LiveModelOptions } from "@/lib/models";
 
 export const CATEGORY_MIN_INDEXABLE_MODELS = 8;
 
+export const SEO_INDEXABLE_CATEGORY_SLUGS = [
+  "modelle-online-ora",
+  "modelle-hd",
+  "nuove-modelle-webcam",
+  "modelle-popolari",
+  "modelle-webcam",
+  "modelle-italiane",
+  "modelle-asiatiche",
+  "modelle-europee",
+  "modelle-mature",
+  "modelle-bionde",
+  "modelle-brune",
+  "modelle-rosse",
+  "modelle-tattoo",
+  "modelle-curvy",
+  "modelle-prosperose",
+  "modelle-lingerie",
+  "modelle-trans",
+  "coppie-webcam",
+  "modelle-private",
+] as const;
+
+const seoIndexableSlugs = new Set<string>(SEO_INDEXABLE_CATEGORY_SLUGS);
+
+const categorySeo: Record<string, { title: string; h1: string; description: string; intro: string }> = {
+  "modelle-online-ora": {
+    title: "Modelle webcam online ora con stanze live",
+    h1: "Modelle webcam online ora",
+    description: "Guarda le modelle webcam online ora con anteprime aggiornate e accesso rapido alle stanze live disponibili in questo momento.",
+    intro: "Scopri le stanze disponibili in questo momento. La selezione cambia durante la giornata seguendo l'apertura e la chiusura delle live.",
+  },
+  "modelle-hd": {
+    title: "Modelle webcam HD online con anteprime live",
+    h1: "Modelle webcam HD online",
+    description: "Scopri modelle webcam HD online con anteprime live e profili disponibili. La selezione cambia durante la giornata insieme alle stanze attive.",
+    intro: "Sfoglia profili che dichiarano una trasmissione in alta definizione e confronta le stanze attive in questo momento.",
+  },
+  "nuove-modelle-webcam": {
+    title: "Nuove modelle webcam online con profili recenti",
+    h1: "Nuove modelle webcam online",
+    description: "Scopri nuove modelle webcam segnalate come recenti, con anteprime disponibili e accesso rapido alle stanze attive durante la giornata.",
+    intro: "Trova profili segnalati come recenti e consulta le anteprime disponibili mentre le stanze sono attive.",
+  },
+  "modelle-popolari": {
+    title: "Modelle webcam popolari online con stanze attive",
+    h1: "Modelle webcam popolari",
+    description: "Esplora modelle webcam popolari usando segnali di attività disponibili come utenti in stanza e profili seguiti durante le live.",
+    intro: "Esplora stanze che mostrano una partecipazione elevata o un seguito consolidato durante le sessioni live.",
+  },
+  "modelle-webcam": {
+    title: "Modelle webcam online con profili live e categorie",
+    h1: "Modelle webcam online",
+    description: "Sfoglia modelle webcam online con anteprime live, profili HD, nuove modelle, categorie popolari e filtri utili per trovare stanze disponibili.",
+    intro: "Consulta profili live e passa rapidamente alle categorie più utili per affinare la scelta.",
+  },
+  "modelle-italiane": {
+    title: "Modelle webcam italiane online e camgirl in italiano",
+    h1: "Modelle webcam italiane online",
+    description: "Trova modelle webcam italiane e camgirl che indicano Italia o lingua italiana nelle informazioni disponibili della stanza live.",
+    intro: "Trova stanze che indicano l'Italia o la lingua italiana e verifica la disponibilità corrente dalle anteprime live.",
+  },
+  "modelle-asiatiche": {
+    title: "Modelle webcam asiatiche online con profili live",
+    h1: "Modelle webcam asiatiche online",
+    description: "Esplora modelle webcam asiatiche attraverso le informazioni di regione disponibili, con anteprime live e stanze aggiornate durante la giornata.",
+    intro: "Esplora profili associati alla regione asiatica dalle informazioni dichiarate e confronta le stanze ora disponibili.",
+  },
+  "modelle-europee": {
+    title: "Modelle webcam europee online con profili live",
+    h1: "Modelle webcam europee online",
+    description: "Scopri modelle webcam europee con profili live, anteprime disponibili e percorsi utili verso lingue, paesi e altre categorie aggiornate.",
+    intro: "Scopri profili associati a paesi europei e confronta lingua, anteprima e disponibilità delle stanze attive.",
+  },
+  "modelle-mature": {
+    title: "Modelle mature webcam online con profili live",
+    h1: "Modelle mature webcam online",
+    description: "Sfoglia modelle mature webcam online con età o categoria dichiarata, anteprime live e collegamenti a selezioni affini disponibili.",
+    intro: "Sfoglia profili adulti associati alla categoria mature attraverso età o indicazioni dichiarate nella stanza.",
+  },
+  "modelle-bionde": {
+    title: "Modelle bionde webcam online con profili live",
+    h1: "Modelle bionde webcam online",
+    description: "Trova modelle bionde webcam online quando il profilo indica questa caratteristica, con anteprime live e stanze disponibili durante la giornata.",
+    intro: "Trova profili che indicano capelli biondi e confronta le anteprime delle stanze disponibili in questo momento.",
+  },
+  "modelle-brune": {
+    title: "Modelle brune webcam online con profili live",
+    h1: "Modelle brune webcam online",
+    description: "Esplora modelle brune webcam online quando la stanza indica questa caratteristica, con anteprime live e categorie correlate utili.",
+    intro: "Esplora profili che indicano capelli bruni o castani e scegli tra le stanze attive durante la visita.",
+  },
+  "modelle-rosse": {
+    title: "Modelle rosse webcam online con profili live",
+    h1: "Modelle rosse webcam online",
+    description: "Scopri modelle rosse webcam online quando il profilo segnala capelli rossi, con anteprime live e disponibilità variabile durante il giorno.",
+    intro: "Scopri profili che indicano capelli rossi e consulta le anteprime disponibili mentre le stanze sono online.",
+  },
+  "modelle-tattoo": {
+    title: "Modelle tattoo webcam online con profili live",
+    h1: "Modelle tattoo webcam online",
+    description: "Scopri modelle tattoo webcam online quando la stanza indica tatuaggi, con anteprime live e profili che cambiano secondo la disponibilità.",
+    intro: "Scopri profili che indicano tatuaggi e confronta le stanze live disponibili senza attribuire caratteristiche non dichiarate.",
+  },
+  "modelle-curvy": {
+    title: "Modelle curvy webcam online con profili live",
+    h1: "Modelle curvy webcam online",
+    description: "Esplora modelle curvy webcam online quando il profilo usa questa categoria, con anteprime live e collegamenti a selezioni affini.",
+    intro: "Esplora profili associati alla categoria curvy e scegli tra le anteprime delle stanze attive durante la visita.",
+  },
+  "modelle-prosperose": {
+    title: "Modelle prosperose webcam online con profili live",
+    h1: "Modelle prosperose webcam online",
+    description: "Sfoglia modelle prosperose webcam online in una selezione rispettosa basata sulle indicazioni del profilo e sulla disponibilità live.",
+    intro: "Sfoglia una selezione rispettosa di profili che indicano questa categoria e verifica quali stanze sono disponibili ora.",
+  },
+  "modelle-lingerie": {
+    title: "Modelle in lingerie online con webcam live",
+    h1: "Modelle in lingerie online",
+    description: "Trova modelle in lingerie online quando la stanza indica questa categoria, con anteprime webcam live e disponibilità aggiornata.",
+    intro: "Trova stanze che indicano la categoria lingerie e confronta le anteprime disponibili nel corso della giornata.",
+  },
+  "modelle-trans": {
+    title: "Modelle trans webcam online con profili live",
+    h1: "Modelle trans webcam online",
+    description: "Scopri modelle trans webcam online attraverso la categoria dichiarata, con anteprime live e stanze disponibili durante la giornata.",
+    intro: "Scopri profili trans attraverso la categoria dichiarata e consulta con rispetto le stanze disponibili in questo momento.",
+  },
+  "coppie-webcam": {
+    title: "Coppie webcam online con stanze live",
+    h1: "Coppie webcam online",
+    description: "Esplora coppie webcam online attraverso la categoria dichiarata, con anteprime live e stanze che cambiano secondo la disponibilità.",
+    intro: "Esplora profili di coppia attraverso la categoria dichiarata e verifica le stanze live disponibili durante la visita.",
+  },
+  "modelle-private": {
+    title: "Modelle webcam private online con stanze disponibili",
+    h1: "Modelle webcam private",
+    description: "Trova modelle webcam private quando la stanza risulta occupata in una sessione privata, con stato aggiornato durante la giornata.",
+    intro: "Consulta le stanze che risultano in sessione privata. Lo stato può cambiare rapidamente quando una sessione termina.",
+  },
+};
+
+const canonicalCategoryAliases: Record<string, string> = {
+  "modelle-disponibili-adesso": "/modelle-online-ora/",
+  "modelle-live-cam": "/modelle-online-ora/",
+  "modelle-in-videochat": "/modelle-online-ora/",
+  "modelle-in-chat-privata": "/modelle-private/",
+  "modelle-cosplay-live": "/modelle-cosplay/",
+};
+
 export type ChaturbateCategoryQuery = {
   gender?: string | string[];
   region?: string | string[];
@@ -20,7 +169,7 @@ export type ModelCategory = {
   canonicalPath: string;
   minimumModelCount: number;
   related: string[];
-  sitemapSafe?: boolean;
+  seoIndexable: boolean;
   providerSupport: "chaturbate"[];
   chaturbateQuery?: ChaturbateCategoryQuery;
   matchNotes: string;
@@ -28,7 +177,7 @@ export type ModelCategory = {
   match: (model: LiveModel) => boolean;
 };
 
-type CategoryInput = Omit<ModelCategory, "minimumModelCount" | "canonicalPath" | "metaTitle" | "metaDescription" | "providerSupport"> & {
+type CategoryInput = Omit<ModelCategory, "minimumModelCount" | "canonicalPath" | "metaTitle" | "metaDescription" | "providerSupport" | "seoIndexable"> & {
   metaTitle?: string;
   metaDescription?: string;
   providerSupport?: "chaturbate"[];
@@ -103,13 +252,17 @@ function countryOrLanguage(countryTerms: string[], languageTerms: string[]): (mo
 }
 
 function makeCategory(input: CategoryInput): ModelCategory {
+  const seo = categorySeo[input.slug];
   return {
     ...input,
-    canonicalPath: `/${input.slug}/`,
-    metaTitle: input.metaTitle ?? `${input.title} online 18+`,
+    title: seo?.h1 ?? input.title,
+    intro: seo?.intro ?? input.intro,
+    canonicalPath: canonicalCategoryAliases[input.slug] ?? `/${input.slug}/`,
+    metaTitle: seo?.title ?? input.metaTitle ?? `${input.title} online 18+`,
     metaDescription:
-      input.metaDescription ?? `${input.title} con profili live filtrati solo da metadati reali disponibili.`,
+      seo?.description ?? input.metaDescription ?? `${input.title} con profili live e informazioni disponibili per la stanza.`,
     minimumModelCount: CATEGORY_MIN_INDEXABLE_MODELS,
+    seoIndexable: seoIndexableSlugs.has(input.slug),
     providerSupport: input.providerSupport ?? ["chaturbate"],
   };
 }
@@ -123,7 +276,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Profili 18+ attivi in questo momento, filtrati dallo stato live restituito dalla sorgente.",
     badges: ["Online ora", "Live", "18+"],
     related: ["modelle-hd", "nuove-modelle-webcam", "modelle-popolari", "modelle-webcam"],
-    sitemapSafe: true,
     chaturbateQuery: FEMALE_QUERY,
     matchNotes: "current_show public, private o group",
     match: (model) => isFemale(model) && isOnline(model),
@@ -144,7 +296,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Profili 18+ mostrati solo quando il feed li segnala come nuovi.",
     badges: ["Nuove", "18+", "Aggiornate"],
     related: ["modelle-online-ora", "modelle-hd", "modelle-italiane", "modelle-asiatiche"],
-    sitemapSafe: true,
     chaturbateQuery: FEMALE_QUERY,
     matchNotes: "is_new true",
     match: (model) => isFemale(model) && isNew(model),
@@ -155,7 +306,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Profili 18+ in alta definizione, verificati dal parametro HD o dal campo tecnico restituito.",
     badges: ["HD", "Live", "18+"],
     related: ["modelle-online-ora", "nuove-modelle-webcam", "modelle-popolari", "modelle-italiane"],
-    sitemapSafe: true,
     chaturbateQuery: { ...FEMALE_QUERY, hd: true },
     matchNotes: "hd=true e is_hd true",
     match: (model) => isFemale(model) && isHd(model),
@@ -166,7 +316,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Profili con segnali reali di attività, come utenti in stanza o follower dichiarati dal feed.",
     badges: ["Popolari", "Utenti", "18+"],
     related: ["modelle-con-piu-utenti", "modelle-hd", "modelle-online-ora", "modelle-private"],
-    sitemapSafe: true,
     chaturbateQuery: FEMALE_QUERY,
     matchNotes: "num_users o num_followers sopra soglia",
     match: (model) => isFemale(model) && popular(model),
@@ -267,7 +416,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Profili femminili 18+ restituiti dal feed live, con link interni e metadati verificabili.",
     badges: ["Modelle", "Live", "18+"],
     related: ["ragazze-live", "camgirl-online", "modelle-online-ora", "modelle-hd"],
-    sitemapSafe: true,
     chaturbateQuery: FEMALE_QUERY,
     matchNotes: "gender f",
     match: isFemale,
@@ -318,7 +466,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Profili 18+ dall'area Europa e Russia quando il filtro regionale o paese lo conferma.",
     badges: ["Europa", "Live", "18+"],
     related: ["modelle-italiane", "modelle-spagnole", "modelle-francesi", "modelle-tedesche"],
-    sitemapSafe: true,
     chaturbateQuery: { ...FEMALE_QUERY, region: "europe_russia" },
     matchNotes: "region europe_russia o paese europeo",
     match: (model) => isFemale(model) && anyMatches(model, ["italy", "italia", "spain", "france", "germany", "russia", "europe"]),
@@ -329,7 +476,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Modelle webcam asiatiche 18+ filtrate con regione Asia e segnali reali di paese, lingua o tag.",
     badges: ["Asia", "Live", "18+"],
     related: ["modelle-giapponesi", "modelle-coreane", "modelle-thailandesi", "modelle-latine"],
-    sitemapSafe: true,
     chaturbateQuery: { ...FEMALE_QUERY, region: "asia" },
     matchNotes: "region asia, paese asiatico o tag coerenti",
     match: (model) => isFemale(model) && anyMatches(model, ["asian", "asia", "japan", "korea", "thai", "china", "philippines"]),
@@ -370,7 +516,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Modelle webcam italiane o in lingua italiana 18+ filtrate solo da paese, lingua o tag espliciti.",
     badges: ["Italia", "Italiano", "18+"],
     related: ["modelle-europee", "modelle-spagnole", "modelle-francesi", "modelle-online-ora"],
-    sitemapSafe: true,
     chaturbateQuery: FEMALE_QUERY,
     matchNotes: "country IT/Italy o spoken_languages italiano",
     match: (model) => isFemale(model) && countryOrLanguage(["it", "italy", "italia"], ["italian", "italiano"])(model),
@@ -541,7 +686,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Profili mature 18+ basati su età adulta dichiarata o tag mature restituiti dal feed.",
     badges: ["Mature", "Età", "18+"],
     related: ["modelle-40-plus", "modelle-50-plus", "modelle-curvy", "modelle-online-ora"],
-    sitemapSafe: true,
     chaturbateQuery: { ...FEMALE_QUERY, tags: ["mature"] },
     matchNotes: "tag mature o age >= 40",
     match: (model) => isFemale(model) && (ageAtLeast(40)(model) || tagMatches(model, ["mature"])),
@@ -552,7 +696,6 @@ const categoryInputs: CategoryInput[] = [
     intro: "Modelle webcam bionde 18+ mostrate solo quando tag o hashtag dichiarano blonde.",
     badges: ["Bionde", "Tag reali", "18+"],
     related: ["modelle-brune", "modelle-rosse", "modelle-hd", "modelle-online-ora"],
-    sitemapSafe: true,
     chaturbateQuery: { ...FEMALE_QUERY, tags: ["blonde"] },
     matchNotes: "tag o hashtag blonde",
     match: (model) => isFemale(model) && tagMatches(model, ["blonde", "blond"]),
@@ -892,7 +1035,7 @@ export function getRelatedCategories(category: ModelCategory): ModelCategory[] {
 }
 
 export function getSitemapCategoryPaths(): string[] {
-  return categories.filter((category) => category.sitemapSafe).map((category) => category.canonicalPath);
+  return categories.filter((category) => category.seoIndexable).map((category) => category.canonicalPath);
 }
 
 export function getCategoryModelOptions(category: ModelCategory): LiveModelOptions {

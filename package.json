@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "audit:migration-canonical": "node scripts/audit-migration-canonical.mjs",
-    "check:index": "node scripts/audit-index-cleanup.mjs"
+    "check:index": "node scripts/audit-index-cleanup.mjs",
+    "check:seo": "node scripts/audit-seo.mjs"
   },
   "dependencies": {
     "next": "16.2.9",

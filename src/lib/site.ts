@@ -78,10 +78,10 @@ export type GuidePage = {
 export const guidePages: Record<string, GuidePage> = {
   "diventare-webcam-model": {
     slug: "diventare-webcam-model",
-    title: "Diventa webcam model",
+    title: "Come diventare webcam model in Italia",
     description:
-      "Percorso compatto per aprire un profilo creator 18+ con privacy, setup, registrazione e aspettative realistiche.",
-    eyebrow: "Creator signup",
+      "Guida pratica per diventare webcam model in Italia con privacy, nome artistico, attrezzatura, studio, limiti personali e aspettative realistiche.",
+    eyebrow: "Guida pratica",
     intro: "Apri il tuo profilo solo dopo aver preparato identità, studio, privacy e limiti personali.",
     ctaLabel: "Candidati come model",
     ctaHref: "/go/model-signup",
@@ -127,9 +127,9 @@ export const guidePages: Record<string, GuidePage> = {
   },
   "diventare-camgirl": {
     slug: "diventare-camgirl",
-    title: "Diventa camgirl",
-    description: "Primi passi per creare una presenza webcam 18+ con discrezione, studio e confini chiari.",
-    eyebrow: "Start creator",
+    title: "Come diventare camgirl in Italia",
+    description: "Guida per diventare camgirl in Italia con identità separata, privacy, studio domestico, limiti personali e preparazione consapevole.",
+    eyebrow: "Primi passi",
     intro: "Parti da stile, privacy e limiti. La camera arriva dopo.",
     ctaLabel: "Scopri come iniziare",
     ctaHref: "/diventare-webcam-model/",
@@ -155,9 +155,9 @@ export const guidePages: Record<string, GuidePage> = {
   },
   "lavorare-in-webcam": {
     slug: "lavorare-in-webcam",
-    title: "Lavorare in webcam",
-    description: "Modulo pratico su spazio domestico, orari, privacy e gestione del lavoro in webcam.",
-    eyebrow: "Home studio",
+    title: "Lavorare in webcam da casa",
+    description: "Indicazioni pratiche per lavorare in webcam da casa con privacy, spazio controllato, orari sostenibili e organizzazione degli account.",
+    eyebrow: "Lavoro da casa",
     intro: "Casa e profilo creator devono restare separati, anche quando usi la stessa stanza.",
     sections: [
       {
@@ -181,9 +181,9 @@ export const guidePages: Record<string, GuidePage> = {
   },
   "guadagni-webcam-model": {
     slug: "guadagni-webcam-model",
-    title: "Guadagni webcam model",
-    description: "Aspettative realistiche sui fattori che influenzano i guadagni in webcam, senza promesse.",
-    eyebrow: "Earnings console",
+    title: "Guadagni di una webcam model",
+    description: "Scopri i fattori che influenzano i guadagni di una webcam model. Le entrate variano, dipendono da molte condizioni e non sono mai garantite.",
+    eyebrow: "Entrate variabili",
     intro: "I guadagni non sono garantiti. Leggi le variabili prima di fare piani.",
     sections: [
       {
@@ -207,9 +207,9 @@ export const guidePages: Record<string, GuidePage> = {
   },
   "privacy-webcam-model": {
     slug: "privacy-webcam-model",
-    title: "Privacy webcam model",
-    description: "Controlli privacy per proteggere identità, sfondo, account, dati e confini personali.",
-    eyebrow: "Privacy console",
+    title: "Privacy per webcam model",
+    description: "Proteggi identità, account, nome artistico, sfondo e dati personali con controlli pratici pensati per chi lavora come webcam model.",
+    eyebrow: "Protezione personale",
     intro: "La privacy è una configurazione continua: identità, scena, account e regole personali.",
     sections: [
       {
@@ -238,9 +238,9 @@ export const guidePages: Record<string, GuidePage> = {
   },
   "attrezzatura-webcam-model": {
     slug: "attrezzatura-webcam-model",
-    title: "Attrezzatura webcam model",
-    description: "Setup essenziale per camera, luce, audio, connessione e ambiente creator.",
-    eyebrow: "Studio setup",
+    title: "Attrezzatura per webcam model",
+    description: "Guida all'attrezzatura per webcam model con camera, illuminazione, audio, connessione affidabile e organizzazione pratica dello studio.",
+    eyebrow: "Preparazione dello studio",
     intro: "Uno studio semplice, stabile e pulito vale più di acquisti costosi fatti troppo presto.",
     sections: [
       {
@@ -343,12 +343,23 @@ export const allStaticPages = [
 ];
 
 export function pageMetadata(page: GuidePage): Metadata {
+  const metadataTitles: Record<string, string> = {
+    "diventare-webcam-model": "Come diventare webcam model in Italia con privacy e setup",
+    "diventare-camgirl": "Come diventare camgirl in Italia con privacy e studio",
+    "lavorare-in-webcam": "Lavorare in webcam da casa con privacy e organizzazione",
+    "privacy-webcam-model": "Privacy webcam model per proteggere identità e account",
+    "attrezzatura-webcam-model": "Attrezzatura webcam model per camera, luce, audio e studio",
+    "guadagni-webcam-model": "Guadagni webcam model e fattori che influenzano le entrate",
+  };
+  const title = metadataTitles[page.slug] ?? page.title;
+  const indexable = Object.prototype.hasOwnProperty.call(metadataTitles, page.slug);
   return {
-    title: page.title,
+    title,
     description: page.description,
     alternates: { canonical: `${siteUrl}/${page.slug}/` },
+    robots: { index: indexable, follow: true },
     openGraph: {
-      title: `${page.title} | ${brand}`,
+      title,
       description: page.description,
       url: `${siteUrl}/${page.slug}/`,
       siteName: brand,

@@ -72,15 +72,6 @@ function normalizeToken(value: unknown): string {
     .trim();
 }
 
-function sanitizeDisplayName(value: string | undefined, fallback: string): string {
-  const cleaned = (value ?? "")
-    .replace(/https?:\/\/\S+/gi, "")
-    .replace(/\b(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/\S*)?/gi, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return cleaned || fallback;
-}
-
 function validImageUrl(value: string | undefined): string | undefined {
   if (!value) return undefined;
   try {
@@ -166,7 +157,7 @@ function normalizeChaturbateRoom(item: unknown): LiveModel | undefined {
     provider: "chaturbate",
     id: username,
     performerId: username,
-    name: sanitizeDisplayName(firstString(record, ["display_name"]), username),
+    name: username,
     slug: username,
     profileUrl: `/go/model?provider=chaturbate&username=${encodeURIComponent(username)}`,
     chatRoomUrl,
