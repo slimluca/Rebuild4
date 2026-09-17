@@ -21,6 +21,21 @@ export const academyLinks = [
   { href: "/guadagni-webcam-model/", label: "Guadagni realistici" },
 ];
 
+export const creatorNavItems = [
+  { href: "/diventare-webcam-model/", label: "Diventare webcam model" },
+  { href: "/diventare-camgirl/", label: "Diventare camgirl" },
+  { href: "/lavorare-in-webcam/", label: "Lavorare in webcam" },
+  { href: "/privacy-webcam-model/", label: "Privacy" },
+  { href: "/attrezzatura-webcam-model/", label: "Attrezzatura" },
+  { href: "/guadagni-webcam-model/", label: "Guadagni" },
+] as const;
+
+export const creatorGuideSlugs = new Set(creatorNavItems.map((item) => item.href.slice(1, -1)));
+
+export function isCreatorGuideSlug(slug: string): boolean {
+  return creatorGuideSlugs.has(slug);
+}
+
 export const globalFaqs = [
   {
     question: "Serve essere maggiorenni?",

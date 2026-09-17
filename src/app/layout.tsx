@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
 import { brand, siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -45,6 +43,7 @@ export default function RootLayout({
     "@type": "Organization",
     name: brand,
     url: siteUrl,
+    logo: `${siteUrl}/images/modelle-webcam-logo.png`,
   };
 
   const website = {
@@ -60,9 +59,7 @@ export default function RootLayout({
       <body>
         <JsonLd data={organization} />
         <JsonLd data={website} />
-        <Header />
         {children}
-        <Footer />
       </body>
     </html>
   );

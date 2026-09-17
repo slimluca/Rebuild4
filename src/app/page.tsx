@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { JsonLd } from "@/components/JsonLd";
+import { ViewerShell } from "@/components/SiteShell";
 import {
   AvailabilityPulse,
   CreatorBridge,
@@ -33,15 +34,17 @@ export default async function Home() {
   const models = await getLiveModels(80, visitorGeo.country, visitorGeo.region, { gender: "f", clientIp: visitorGeo.clientIp });
 
   return (
-    <main>
-      <JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }])} />
-      <PlatformTabs />
-      <Hero />
-      <ModelDiscovery models={models} track="mw_home" compact />
-      <HomeCategoryRail />
-      <FullWidthInfoSection content={homeInfoSection} />
-      <CreatorBridge />
-      <AvailabilityPulse />
-    </main>
+    <ViewerShell>
+      <main>
+        <JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }])} />
+        <PlatformTabs />
+        <Hero />
+        <ModelDiscovery models={models} track="mw_home" compact />
+        <HomeCategoryRail />
+        <FullWidthInfoSection content={homeInfoSection} />
+        <CreatorBridge />
+        <AvailabilityPulse />
+      </main>
+    </ViewerShell>
   );
 }

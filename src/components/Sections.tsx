@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ModelCardImage } from "@/components/ModelCardImage";
 import { DiscoveryControls, type DiscoveryItem } from "@/components/DiscoveryControls";
 import { LocalChecklist } from "@/components/LocalChecklist";
-import type { GuidePage, GuideSection, LiveModel } from "@/lib/site";
+import { isCreatorGuideSlug, type GuidePage, type GuideSection, type LiveModel } from "@/lib/site";
 import type { ModelCategory } from "@/lib/model-categories";
 import { categories } from "@/lib/model-categories";
 import { categoryInfoSections, guideInfoSections, type InfoSectionContent } from "@/lib/info-sections";
@@ -92,6 +92,20 @@ const strategicCategorySlugs = new Set([
   "modelle-prosperose",
   "modelle-italiane",
 ]);
+
+const creatorNextGuides: Record<string, { href: string; label: string }> = {
+  "diventare-webcam-model": { href: "/privacy-webcam-model/", label: "Prepara la privacy" },
+  "diventare-camgirl": { href: "/attrezzatura-webcam-model/", label: "Prepara lo studio" },
+  "lavorare-in-webcam": { href: "/privacy-webcam-model/", label: "Proteggi la privacy" },
+  "privacy-webcam-model": { href: "/attrezzatura-webcam-model/", label: "Controlla lo studio" },
+  "attrezzatura-webcam-model": { href: "/lavorare-in-webcam/", label: "Organizza il lavoro" },
+  "guadagni-webcam-model": { href: "/lavorare-in-webcam/", label: "Valuta la routine" },
+};
+
+const creatorHeroSecondary: Record<string, { href: string; label: string }> = {
+  "diventare-webcam-model": { href: "/privacy-webcam-model/", label: "Prepara la privacy" },
+  "diventare-camgirl": { href: "/attrezzatura-webcam-model/", label: "Prepara lo studio" },
+};
 
 const categoryDiscoveryGroups = [
   {
@@ -890,6 +904,28 @@ export function FinalCta({ track }: { track?: string }) {
   );
 }
 
+function CreatorFinalCta({ slug, track }: { slug: string; track: string }) {
+  const secondary = creatorNextGuides[slug] ?? { href: "/diventare-webcam-model/", label: "Torna alla guida principale" };
+
+  return (
+    <section className="final-cta creator-final-cta">
+      <div>
+        <p className="eyebrow">Percorso creator 18+</p>
+        <h2>Continua con preparazione e controllo</h2>
+      </div>
+      <p>
+        Rivedi privacy, studio, limiti e aspettative prima di decidere se procedere con una candidatura.
+      </p>
+      <ButtonRow
+        primaryHref={`/go/model-signup?track=${track}`}
+        primaryLabel="Valuta la candidatura"
+        secondaryHref={secondary.href}
+        secondaryLabel={secondary.label}
+      />
+    </section>
+  );
+}
+
 function GuideNav({ sections }: { sections: GuideSection[] }) {
   return (
     <nav className="module-nav" aria-label="Moduli">
@@ -904,6 +940,7 @@ function GuideNav({ sections }: { sections: GuideSection[] }) {
 
 export function GuideTemplate({ page }: { page: GuidePage }) {
   const isAcademy = page.slug === "academy";
+  const isCreatorGuide = isCreatorGuideSlug(page.slug);
   const showReadiness = page.slug === "diventare-webcam-model";
   const showStudio = page.slug === "attrezzatura-webcam-model";
   const showEarnings = page.slug === "guadagni-webcam-model";
@@ -920,10 +957,11 @@ export function GuideTemplate({ page }: { page: GuidePage }) {
   const primaryHref = page.ctaHref?.startsWith("/go/model-signup") && creatorTrack
     ? `/go/model-signup?track=${creatorTrack}`
     : page.ctaHref;
+  const heroSecondary = creatorHeroSecondary[page.slug];
 
   return (
-    <main>
-      <PlatformTabs />
+    <main className={isCreatorGuide ? "creator-guide" : undefined}>
+      {!isCreatorGuide ? <PlatformTabs /> : null}
       <section className={isAcademy ? "guide-hero academy" : "guide-hero"}>
         <div>
           <p className="eyebrow">{page.eyebrow}</p>
@@ -934,8 +972,8 @@ export function GuideTemplate({ page }: { page: GuidePage }) {
             <ButtonRow
               primaryHref={primaryHref}
               primaryLabel={page.ctaLabel}
-              secondaryHref={isAcademy ? "/modelle-webcam/" : "/academy/"}
-              secondaryLabel={isAcademy ? "Apri la pagina modelle" : "Apri academy"}
+              secondaryHref={heroSecondary?.href ?? (isAcademy ? "/modelle-webcam/" : "/academy/")}
+              secondaryLabel={heroSecondary?.label ?? (isAcademy ? "Apri la pagina modelle" : "Apri academy")}
             />
           ) : null}
         </div>
@@ -1014,7 +1052,7 @@ export function GuideTemplate({ page }: { page: GuidePage }) {
         </section>
       ) : null}
       {page.faqs ? <FaqSection faqs={page.faqs.slice(0, isAcademy ? 6 : 4)} /> : null}
-      <FinalCta track={creatorTrack} />
+      {isCreatorGuide && creatorTrack ? <CreatorFinalCta slug={page.slug} track={creatorTrack} /> : <FinalCta />}
     </main>
   );
 }

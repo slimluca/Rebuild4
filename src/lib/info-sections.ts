@@ -344,7 +344,7 @@ export const guideInfoSections: Record<string, InfoSectionContent> = {
     links: [
       { href: "/diventare-webcam-model/", label: "Preparare il profilo" },
       { href: "/attrezzatura-webcam-model/", label: "Preparare lo studio" },
-      { href: "/faq/", label: "FAQ" },
+      { href: "/lavorare-in-webcam/", label: "Lavorare da casa" },
     ],
   },
   "attrezzatura-webcam-model": {

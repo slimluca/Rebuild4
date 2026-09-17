@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
 import { CategoryDiscovery, GuideTemplate, PlatformTabs } from "@/components/Sections";
+import { CreatorShell, ViewerShell } from "@/components/SiteShell";
 import { categories, getCategoryBySlug, getCategoryModelOptions, getModelsByCategory } from "@/lib/model-categories";
 import {
   academyPage,
@@ -12,6 +13,7 @@ import {
   guidePages,
   getLiveModels,
   getVisitorGeoFromHeaders,
+  isCreatorGuideSlug,
   legalPages,
   pageMetadata,
   siteUrl,
@@ -104,17 +106,19 @@ export default async function DynamicPage({ params }: PageProps) {
     );
 
     return (
-      <main>
-        <JsonLd
-          data={breadcrumbSchema([
-            { name: "Home", path: "/" },
-            { name: "Modelle webcam online", path: "/modelle-webcam/" },
-            { name: category.title, path: category.canonicalPath },
-          ])}
-        />
-        <PlatformTabs />
-        <CategoryDiscovery category={category} models={models} track={viewerTracks[slug] ?? "mw_hub"} />
-      </main>
+      <ViewerShell>
+        <main>
+          <JsonLd
+            data={breadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Modelle webcam online", path: "/modelle-webcam/" },
+              { name: category.title, path: category.canonicalPath },
+            ])}
+          />
+          <PlatformTabs />
+          <CategoryDiscovery category={category} models={models} track={viewerTracks[slug] ?? "mw_hub"} />
+        </main>
+      </ViewerShell>
     );
   }
 
@@ -125,12 +129,13 @@ export default async function DynamicPage({ params }: PageProps) {
     { name: "Home", path: "/" },
     { name: page.title, path: `/${page.slug}/` },
   ];
+  const Shell = isCreatorGuideSlug(page.slug) ? CreatorShell : ViewerShell;
 
   return (
-    <>
+    <Shell>
       <JsonLd data={breadcrumbSchema(crumbs)} />
       {page.faqs ? <JsonLd data={faqSchema(page.faqs)} /> : null}
       <GuideTemplate page={page} />
-    </>
+    </Shell>
   );
 }

@@ -258,6 +258,25 @@ main {
   backdrop-filter: blur(18px);
 }
 
+.creator-header {
+  grid-template-columns: minmax(230px, 0.58fr) minmax(0, 1.42fr) auto;
+}
+
+.creator-header .brand-mark {
+  width: clamp(230px, 20vw, 330px);
+}
+
+.creator-header .desktop-nav {
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.creator-header .desktop-nav a {
+  padding-inline: 9px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
 .brand-mark {
   display: inline-flex;
   align-items: center;
@@ -1548,6 +1567,10 @@ main {
   border: 1px solid var(--line);
   border-radius: 26px;
   background: rgba(8,8,14,0.78);
+}
+
+.creator-footer {
+  grid-template-columns: minmax(260px, 1fr) minmax(220px, 0.8fr) minmax(180px, 0.58fr);
 }
 
 .footer-brand {

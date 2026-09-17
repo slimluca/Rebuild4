@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
+import { ViewerShell } from "@/components/SiteShell";
 import {
   CreatorBridge,
   FullWidthInfoSection,
@@ -32,26 +33,28 @@ export default async function ModelleWebcamPage() {
   const models = await getLiveModels(100, visitorGeo.country, visitorGeo.region, { gender: "f", clientIp: visitorGeo.clientIp });
 
   return (
-    <main>
-      <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Modelle webcam online", path: "/modelle-webcam/" },
-        ])}
-      />
-      <PlatformTabs />
-      <section className="browse-hero">
-        <div>
-          <p className="eyebrow">Profili live</p>
-          <h1>Modelle webcam online</h1>
-        </div>
-        <Link className="btn btn-primary" href="/go/live?track=mw_hub" prefetch={false}>
-          Guarda modelle online
-        </Link>
-      </section>
-      <ModelDiscovery models={models} track="mw_hub" page showCategories />
-      <FullWidthInfoSection content={webcamHubInfoSection} />
-      <CreatorBridge />
-    </main>
+    <ViewerShell>
+      <main>
+        <JsonLd
+          data={breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Modelle webcam online", path: "/modelle-webcam/" },
+          ])}
+        />
+        <PlatformTabs />
+        <section className="browse-hero">
+          <div>
+            <p className="eyebrow">Profili live</p>
+            <h1>Modelle webcam online</h1>
+          </div>
+          <Link className="btn btn-primary" href="/go/live?track=mw_hub" prefetch={false}>
+            Guarda modelle online
+          </Link>
+        </section>
+        <ModelDiscovery models={models} track="mw_hub" page showCategories />
+        <FullWidthInfoSection content={webcamHubInfoSection} />
+        <CreatorBridge />
+      </main>
+    </ViewerShell>
   );
 }

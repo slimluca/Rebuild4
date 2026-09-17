@@ -12,9 +12,21 @@ const routes = [
   "/modelle-prosperose/",
   "/modelle-italiane/",
   "/diventare-webcam-model/",
+  "/diventare-camgirl/",
+  "/lavorare-in-webcam/",
   "/privacy-webcam-model/",
   "/attrezzatura-webcam-model/",
+  "/guadagni-webcam-model/",
 ];
+const creatorRoutes = new Set([
+  "/diventare-webcam-model/",
+  "/diventare-camgirl/",
+  "/lavorare-in-webcam/",
+  "/privacy-webcam-model/",
+  "/attrezzatura-webcam-model/",
+  "/guadagni-webcam-model/",
+]);
+const screenshotRoutes = new Set(["/", "/modelle-webcam/", ...creatorRoutes]);
 const viewports = [
   { width: 1440, height: 900 },
   { width: 1280, height: 800 },
@@ -59,6 +71,12 @@ for (const viewport of viewports) {
         cards,
         cardsAligned: cardTops.length < 2 || Math.max(...cardTops) - Math.min(...cardTops) < 2,
         filterButtons: document.querySelectorAll(".category-panel-links button").length,
+        creatorHeader: document.querySelectorAll(".creator-header").length,
+        creatorFooter: document.querySelectorAll(".creator-footer").length,
+        viewerHeader: document.querySelectorAll(".viewer-header").length,
+        viewerFooter: document.querySelectorAll(".viewer-footer").length,
+        friendLinks: document.querySelectorAll('nav[aria-label="Siti amici"] a').length,
+        platformTabs: document.querySelectorAll(".platform-tabs").length,
       };
     });
     const label = `${route} at ${viewport.width}x${viewport.height}`;
@@ -70,6 +88,15 @@ for (const viewport of viewports) {
     if (checks.infoRatio !== null && checks.infoRatio < 0.9) failures.push(`${label}: information section uses only ${checks.infoRatio.toFixed(2)} of main width`);
     if (!checks.cardsAligned) failures.push(`${label}: first model row is not aligned`);
     if (consoleErrors.length) failures.push(`${label}: console errors: ${consoleErrors.join(" | ")}`);
+    if (creatorRoutes.has(route)) {
+      if (checks.creatorHeader !== 1 || checks.creatorFooter !== 1) failures.push(`${label}: creator chrome is missing`);
+      if (checks.viewerHeader || checks.viewerFooter || checks.friendLinks || checks.platformTabs) failures.push(`${label}: viewer chrome leaked into creator guide`);
+      if (checks.cards) failures.push(`${label}: creator guide rendered model cards`);
+    } else {
+      if (checks.viewerHeader !== 1 || checks.viewerFooter !== 1) failures.push(`${label}: viewer chrome is missing`);
+      if (checks.creatorHeader || checks.creatorFooter) failures.push(`${label}: creator chrome leaked into viewer page`);
+      if (checks.friendLinks !== 6) failures.push(`${label}: viewer footer should retain six friend links`);
+    }
 
     if (viewport.width <= 1120) {
       const menu = page.locator(".mobile-nav summary");
@@ -87,7 +114,7 @@ for (const viewport of viewports) {
       if (score === "0%") failures.push(`${label}: checklist score did not update`);
     }
 
-    if (["/", "/modelle-webcam/", "/privacy-webcam-model/", "/attrezzatura-webcam-model/"].includes(route) && [1440, 390].includes(viewport.width)) {
+    if (screenshotRoutes.has(route) && [1440, 390].includes(viewport.width)) {
       const slug = route === "/" ? "home" : route.split("/").filter(Boolean)[0];
       await page.screenshot({ path: path.join(outputDirectory, `${slug}-${viewport.width}x${viewport.height}.png`), fullPage: true });
     }
