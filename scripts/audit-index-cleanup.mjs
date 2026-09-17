@@ -2,20 +2,20 @@ const baseUrl = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const pages = [
   "/",
   "/modelle-webcam/",
-  "/modelle-online-ora/",
+  "/modelle-hd/",
+  "/nuove-modelle-webcam/",
+  "/modelle-tattoo/",
+  "/modelle-prosperose/",
+  "/modelle-italiane/",
   "/diventare-webcam-model/",
   "/diventare-camgirl/",
   "/lavorare-in-webcam/",
   "/privacy-webcam-model/",
   "/attrezzatura-webcam-model/",
   "/guadagni-webcam-model/",
-  "/academy/",
-  "/faq/",
-  "/privacy-policy/",
-  "/termini/",
-  "/disclaimer/",
-  "/contatti/",
 ];
+
+const secondaryPages = ["/modelle-popolari/", "/modelle-bionde/", "/modelle-brune/", "/modelle-asiatiche/", "/modelle-curvy/"];
 
 const failures = [];
 
@@ -25,6 +25,16 @@ for (const path of pages) {
   if (response.status !== 200) failures.push(`${path} returned ${response.status}`);
   if (/noindex/i.test(robots)) failures.push(`${path} has noindex header`);
 }
+
+for (const path of secondaryPages) {
+  const response = await fetch(new URL(path, baseUrl));
+  const html = await response.text();
+  if (response.status !== 200) failures.push(`${path} returned ${response.status}`);
+  if (!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html)) failures.push(`${path} is missing noindex`);
+}
+
+const onlineResponse = await fetch(new URL("/modelle-online-ora/", baseUrl), { redirect: "manual" });
+if (onlineResponse.status !== 308) failures.push(`/modelle-online-ora/ should return 308, got ${onlineResponse.status}`);
 
 const goResponse = await fetch(new URL("/go/live", baseUrl), { redirect: "manual" });
 const goRobots = goResponse.headers.get("x-robots-tag") || "";

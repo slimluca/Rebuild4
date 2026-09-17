@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { getModelRedirectUrl, getVisitorGeoFromHeaders } from "@/lib/models";
+import { isTrackValue, withAttribution } from "@/lib/affiliate-attribution.mjs";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const provider = url.searchParams.get("provider");
   const username = url.searchParams.get("username");
   const performerId = username ?? url.searchParams.get("performerId") ?? url.searchParams.get("id");
+  const track = url.searchParams.get("track");
   const fallback = new URL("/modelle-webcam/", request.url);
   const visitorGeo = getVisitorGeoFromHeaders(request.headers);
   const feedDestination = performerId
@@ -15,7 +17,8 @@ export async function GET(request: Request) {
       })
     : undefined;
   if (feedDestination) {
-    const response = NextResponse.redirect(feedDestination);
+    const destination = isTrackValue(track) ? withAttribution(feedDestination, track) : feedDestination;
+    const response = NextResponse.redirect(destination);
     response.headers.set("X-Robots-Tag", "noindex, nofollow");
     return response;
   }
@@ -28,7 +31,8 @@ export async function GET(request: Request) {
     return response;
   }
 
-  const destination = performerId ? template.replace("{id}", encodeURIComponent(performerId)) : template;
+  const templatedDestination = performerId ? template.replace("{id}", encodeURIComponent(performerId)) : template;
+  const destination = isTrackValue(track) ? withAttribution(templatedDestination, track) : templatedDestination;
   const response = NextResponse.redirect(destination);
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
   return response;

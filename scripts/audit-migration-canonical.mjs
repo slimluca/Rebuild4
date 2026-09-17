@@ -3,13 +3,13 @@ const baseUrl = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const publicPages = [
   "/",
   "/modelle-webcam/",
-  "/modelle-online-ora/",
   "/modelle-hd/",
   "/diventare-webcam-model/",
   "/privacy-webcam-model/",
 ];
 
 const redirectChecks = [
+  { path: "/modelle-online-ora/", target: "/modelle-webcam/" },
   { path: "/modelle-webcam", target: "/modelle-webcam/" },
   { path: "/tag/modelle-hd", target: "/modelle-hd/" },
   { path: "/category/diventare-webcam-model", target: "/diventare-webcam-model/" },

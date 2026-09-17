@@ -2,21 +2,22 @@ const baseUrl = new URL(process.argv[2] || process.env.SEO_AUDIT_BASE_URL || "ht
 const canonicalOrigin = "https://modellewebcam.com";
 
 const categoryPaths = [
-  "/modelle-online-ora/",
+  "/modelle-webcam/",
   "/modelle-hd/",
   "/nuove-modelle-webcam/",
-  "/modelle-popolari/",
-  "/modelle-webcam/",
   "/modelle-italiane/",
+  "/modelle-tattoo/",
+  "/modelle-prosperose/",
+];
+
+const secondaryCategoryPaths = [
+  "/modelle-popolari/",
   "/modelle-asiatiche/",
   "/modelle-europee/",
   "/modelle-mature/",
   "/modelle-bionde/",
   "/modelle-brune/",
-  "/modelle-rosse/",
-  "/modelle-tattoo/",
   "/modelle-curvy/",
-  "/modelle-prosperose/",
   "/modelle-lingerie/",
   "/modelle-trans/",
   "/coppie-webcam/",
@@ -155,6 +156,13 @@ for (const path of informationalPaths) {
   assert(metaContent(html, "rating") === "", `${path} should not have adult rating metadata`);
 }
 
+for (const path of secondaryCategoryPaths) {
+  const { response, html } = await fetchHtml(path);
+  assert(response.status === 200, `${path} should remain available with 200, got ${response.status}`);
+  assert(metaContent(html, "robots").toLowerCase().includes("noindex"), `${path} should be noindex`);
+  assert(!metaContent(html, "robots").toLowerCase().includes("nofollow"), `${path} should remain follow`);
+}
+
 for (const path of priorityPaths) {
   const { html } = await fetchHtml(path);
   const text = ` ${visibleText(html)} `;
@@ -183,6 +191,9 @@ for (const url of sitemapUrls) {
   assert(response.status === 200, `sitemap URL redirects or fails: ${path} returned ${response.status}`);
   assert(!metaContent(html, "robots").toLowerCase().includes("noindex"), `sitemap contains noindex URL: ${path}`);
 }
+for (const path of secondaryCategoryPaths) {
+  assert(!sitemapUrls.includes(`${canonicalOrigin}${path}`), `sitemap contains secondary category ${path}`);
+}
 
 const robotsResponse = await request("/robots.txt");
 const robotsText = await robotsResponse.text();
@@ -191,15 +202,21 @@ assert(robotsText.includes(`Sitemap: ${canonicalOrigin}/sitemap.xml`), "robots.t
 assert(robotsText.includes("Disallow: /go/"), "robots.txt does not protect go routes");
 
 const internalLinks = new Set();
-for (const { html } of fetched.values()) {
+const incomingStrategicLinks = new Map(indexablePaths.map((path) => [path, new Set()]));
+for (const sourcePath of indexablePaths) {
+  const { html } = await fetchHtml(sourcePath);
   for (const match of matches(html, /<a\b[^>]*\bhref=["']([^"'#?]+)[^"']*["']/gi)) {
     const href = decodeHtml(match[1]);
     if (href.startsWith("/") && !href.startsWith("//") && !href.startsWith("/_next/") && !href.startsWith("/go/")) internalLinks.add(href);
+    if (sourcePath !== href && incomingStrategicLinks.has(href)) incomingStrategicLinks.get(href).add(sourcePath);
   }
 }
 for (const href of internalLinks) {
   const response = await request(href);
   assert(response.status === 200, `internal link ${href} returned ${response.status}`);
+}
+for (const [path, sources] of incomingStrategicLinks) {
+  assert(sources.size >= 2, `${path} should receive links from at least two other strategic pages, got ${sources.size}`);
 }
 
 const goResponse = await request("/go/live");

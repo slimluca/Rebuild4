@@ -6,8 +6,8 @@ export type LegacyRedirectResult =
 export const directLegacyRedirects: Record<string, string> = {
   "/modelle-webcam": "/modelle-webcam/",
   "/modelle-webcam-online": "/modelle-webcam/",
-  "/modelle-online": "/modelle-online-ora/",
-  "/modelle-online-ora": "/modelle-online-ora/",
+  "/modelle-online": "/modelle-webcam/#online",
+  "/modelle-online-ora": "/modelle-webcam/#online",
   "/webcam-model": "/diventare-webcam-model/",
   "/webcam-models": "/diventare-webcam-model/",
   "/diventa-webcam-model": "/diventare-webcam-model/",
@@ -35,9 +35,9 @@ export const directLegacyRedirects: Record<string, string> = {
   "/coppie-webcam": "/coppie-webcam/",
   "/ragazze-live": "/ragazze-live/",
   "/camgirl-online": "/camgirl-online/",
-  "/modelle-disponibili-adesso": "/modelle-online-ora/",
-  "/modelle-live-cam": "/modelle-online-ora/",
-  "/modelle-in-videochat": "/modelle-online-ora/",
+  "/modelle-disponibili-adesso": "/modelle-webcam/#online",
+  "/modelle-live-cam": "/modelle-webcam/#online",
+  "/modelle-in-videochat": "/modelle-webcam/#online",
   "/modelle-in-chat-privata": "/modelle-private/",
   "/modelle-cosplay-live": "/modelle-cosplay/",
 };

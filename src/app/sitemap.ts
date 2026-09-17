@@ -1,8 +1,14 @@
 import type { MetadataRoute } from "next";
-import { getSitemapCategoryPaths } from "@/lib/model-categories";
 import { siteUrl } from "@/lib/site";
 
-const creatorGuidePaths = [
+export const recoverySitemapPaths = [
+  "/",
+  "/modelle-webcam/",
+  "/modelle-hd/",
+  "/nuove-modelle-webcam/",
+  "/modelle-tattoo/",
+  "/modelle-prosperose/",
+  "/modelle-italiane/",
   "/diventare-webcam-model/",
   "/diventare-camgirl/",
   "/lavorare-in-webcam/",
@@ -12,6 +18,5 @@ const creatorGuidePaths = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = ["/", ...getSitemapCategoryPaths(), ...creatorGuidePaths];
-  return Array.from(new Set(paths)).map((path) => ({ url: `${siteUrl}${path}` }));
+  return recoverySitemapPaths.map((path) => ({ url: `${siteUrl}${path}` }));
 }

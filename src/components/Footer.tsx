@@ -39,7 +39,7 @@ export function Footer() {
         <ul>
           {friendSites.map((site) => (
             <li key={site.href}>
-              <a href={site.href} target="_blank" rel="noopener noreferrer">
+              <a href={site.href} target="_blank" rel="nofollow noopener noreferrer">
                 {site.label}
               </a>
             </li>

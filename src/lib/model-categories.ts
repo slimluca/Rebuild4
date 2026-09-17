@@ -4,25 +4,12 @@ import type { LiveModelOptions } from "@/lib/models";
 export const CATEGORY_MIN_INDEXABLE_MODELS = 8;
 
 export const SEO_INDEXABLE_CATEGORY_SLUGS = [
-  "modelle-online-ora",
   "modelle-hd",
   "nuove-modelle-webcam",
-  "modelle-popolari",
   "modelle-webcam",
   "modelle-italiane",
-  "modelle-asiatiche",
-  "modelle-europee",
-  "modelle-mature",
-  "modelle-bionde",
-  "modelle-brune",
-  "modelle-rosse",
   "modelle-tattoo",
-  "modelle-curvy",
   "modelle-prosperose",
-  "modelle-lingerie",
-  "modelle-trans",
-  "coppie-webcam",
-  "modelle-private",
 ] as const;
 
 const seoIndexableSlugs = new Set<string>(SEO_INDEXABLE_CATEGORY_SLUGS);
@@ -273,7 +260,7 @@ const categoryInputs: CategoryInput[] = [
   {
     slug: "modelle-online-ora",
     title: "Modelle webcam online ora",
-    intro: "Profili 18+ attivi in questo momento, filtrati dallo stato live restituito dalla sorgente.",
+    intro: "Profili 18+ attivi in questo momento, con anteprime e stato della stanza aggiornati durante la visita.",
     badges: ["Online ora", "Live", "18+"],
     related: ["modelle-hd", "nuove-modelle-webcam", "modelle-popolari", "modelle-webcam"],
     chaturbateQuery: FEMALE_QUERY,
@@ -293,7 +280,7 @@ const categoryInputs: CategoryInput[] = [
   {
     slug: "nuove-modelle-webcam",
     title: "Nuove modelle webcam",
-    intro: "Profili 18+ mostrati solo quando il feed li segnala come nuovi.",
+    intro: "Profili 18+ contrassegnati come nuovi, con anteprime delle stanze disponibili durante la visita.",
     badges: ["Nuove", "18+", "Aggiornate"],
     related: ["modelle-online-ora", "modelle-hd", "modelle-italiane", "modelle-asiatiche"],
     chaturbateQuery: FEMALE_QUERY,
@@ -303,7 +290,7 @@ const categoryInputs: CategoryInput[] = [
   {
     slug: "modelle-hd",
     title: "Modelle webcam HD",
-    intro: "Profili 18+ in alta definizione, verificati dal parametro HD o dal campo tecnico restituito.",
+    intro: "Profili 18+ che indicano una trasmissione in alta definizione, con anteprime delle stanze disponibili.",
     badges: ["HD", "Live", "18+"],
     related: ["modelle-online-ora", "nuove-modelle-webcam", "modelle-popolari", "modelle-italiane"],
     chaturbateQuery: { ...FEMALE_QUERY, hd: true },

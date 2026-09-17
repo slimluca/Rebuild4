@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { JsonLd } from "@/components/JsonLd";
 import {
@@ -36,7 +37,7 @@ export default async function Home() {
       <JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }])} />
       <PlatformTabs />
       <Hero />
-      <ModelDiscovery models={models} compact />
+      <ModelDiscovery models={models} track="mw_home" compact />
       <HomeCategoryRail />
       <FullWidthInfoSection content={homeInfoSection} />
       <CreatorBridge />
@@ -44,4 +45,3 @@ export default async function Home() {
     </main>
   );
 }
-import type { Metadata } from "next";

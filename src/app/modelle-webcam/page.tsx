@@ -3,7 +3,6 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import {
-  CategoryChips,
   CreatorBridge,
   FullWidthInfoSection,
   ModelDiscovery,
@@ -46,27 +45,11 @@ export default async function ModelleWebcamPage() {
           <p className="eyebrow">Profili live</p>
           <h1>Modelle webcam online</h1>
         </div>
-        <CategoryChips
-          slugs={[
-            "modelle-online-ora",
-            "modelle-hd",
-            "nuove-modelle-webcam",
-            "modelle-popolari",
-            "modelle-bionde",
-            "modelle-brune",
-            "modelle-asiatiche",
-            "modelle-italiane",
-            "modelle-prosperose",
-            "modelle-curvy",
-            "modelle-tattoo",
-            "modelle-lingerie",
-          ]}
-        />
-        <Link className="btn btn-primary" href="/go/live">
+        <Link className="btn btn-primary" href="/go/live?track=mw_hub" prefetch={false}>
           Guarda modelle online
         </Link>
       </section>
-      <ModelDiscovery models={models} page showCategories />
+      <ModelDiscovery models={models} track="mw_hub" page showCategories />
       <FullWidthInfoSection content={webcamHubInfoSection} />
       <CreatorBridge />
     </main>

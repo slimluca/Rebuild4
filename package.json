@@ -9,7 +9,14 @@
     "lint": "eslint",
     "audit:migration-canonical": "node scripts/audit-migration-canonical.mjs",
     "check:index": "node scripts/audit-index-cleanup.mjs",
-    "check:seo": "node scripts/audit-seo.mjs"
+    "check:seo": "node scripts/audit-seo.mjs",
+    "check:copy": "node scripts/audit-public-copy.mjs",
+    "check:tracking": "node scripts/test-conversion-tracking.mjs",
+    "check:go": "node scripts/audit-go-routes.mjs",
+    "check:history": "node scripts/audit-historical-routes.mjs",
+    "report:content": "node scripts/report-content-metrics.mjs",
+    "qa:responsive": "node scripts/qa-responsive.mjs",
+    "measure:performance": "node scripts/measure-performance.mjs"
   },
   "dependencies": {
     "next": "16.2.9",

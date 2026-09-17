@@ -22,7 +22,7 @@ export function Header() {
           </Link>
         ))}
       </nav>
-      <Link className="header-cta" href="/go/model-signup">
+      <Link className="header-cta" href="/diventare-webcam-model/">
         Diventa model
       </Link>
       <span className="header-age">18+</span>
@@ -34,7 +34,7 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Link className="mobile-cta" href="/go/model-signup">
+          <Link className="mobile-cta" href="/diventare-webcam-model/">
             Diventa model
           </Link>
         </div>

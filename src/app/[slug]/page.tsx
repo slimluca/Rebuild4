@@ -20,6 +20,14 @@ import {
 
 type PageProps = { params: Promise<{ slug: string }> };
 
+const viewerTracks: Record<string, string> = {
+  "modelle-hd": "mw_hd",
+  "nuove-modelle-webcam": "mw_new",
+  "modelle-tattoo": "mw_tattoo",
+  "modelle-prosperose": "mw_prosperose",
+  "modelle-italiane": "mw_italiane",
+};
+
 function findPage(slug: string): GuidePage | undefined {
   if (slug === "academy") return academyPage;
   if (slug === "faq") {
@@ -105,7 +113,7 @@ export default async function DynamicPage({ params }: PageProps) {
           ])}
         />
         <PlatformTabs />
-        <CategoryDiscovery category={category} models={models} />
+        <CategoryDiscovery category={category} models={models} track={viewerTracks[slug] ?? "mw_hub"} />
       </main>
     );
   }
