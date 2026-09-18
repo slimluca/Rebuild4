@@ -26,3 +26,15 @@ export function withAttribution(destination, track) {
   if (isTrackValue(track)) url.searchParams.set("track", track);
   return url.toString();
 }
+
+export function withChaturbateAttribution(destination, track) {
+  let url;
+  try {
+    url = new URL(destination);
+  } catch {
+    return undefined;
+  }
+
+  if (url.protocol !== "https:" || !/(^|\.)chaturbate\.com$/i.test(url.hostname)) return undefined;
+  return withAttribution(url, track);
+}

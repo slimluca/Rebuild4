@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { JsonLd } from "@/components/JsonLd";
 import { brand, siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -57,6 +58,7 @@ export default function RootLayout({
   return (
     <html lang="it" className={`${inter.variable} ${cormorant.variable}`}>
       <body>
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         <JsonLd data={organization} />
         <JsonLd data={website} />
         {children}

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getModelRedirectUrl, getVisitorGeoFromHeaders } from "@/lib/models";
-import { isTrackValue, withAttribution } from "@/lib/affiliate-attribution.mjs";
+import { isTrackValue, withAttribution, withChaturbateAttribution } from "@/lib/affiliate-attribution.mjs";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -17,10 +17,12 @@ export async function GET(request: Request) {
       })
     : undefined;
   if (feedDestination) {
-    const destination = isTrackValue(track) ? withAttribution(feedDestination, track) : feedDestination;
-    const response = NextResponse.redirect(destination);
-    response.headers.set("X-Robots-Tag", "noindex, nofollow");
-    return response;
+    const destination = withChaturbateAttribution(feedDestination, track);
+    if (destination) {
+      const response = NextResponse.redirect(destination);
+      response.headers.set("X-Robots-Tag", "noindex, nofollow");
+      return response;
+    }
   }
 
   const template = process.env.MODEL_DESTINATION_URL;

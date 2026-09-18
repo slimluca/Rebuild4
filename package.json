@@ -15,6 +15,7 @@
     "check:go": "node scripts/audit-go-routes.mjs",
     "check:history": "node scripts/audit-historical-routes.mjs",
     "check:separation": "node scripts/audit-creator-separation.mjs",
+    "check:analytics": "node scripts/check-analytics.mjs",
     "report:content": "node scripts/report-content-metrics.mjs",
     "qa:responsive": "node scripts/qa-responsive.mjs",
     "measure:performance": "node scripts/measure-performance.mjs"
