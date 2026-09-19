@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 const baseUrl = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3100";
+const base = new URL(baseUrl);
 
 async function redirect(path, expectedTrack, allowLocalFallback = false) {
   const response = await fetch(new URL(path, baseUrl), { redirect: "manual" });
@@ -10,8 +11,12 @@ async function redirect(path, expectedTrack, allowLocalFallback = false) {
   const location = response.headers.get("location");
   assert(location, `${path} is missing a redirect location`);
   const destination = new URL(location, baseUrl);
-  if (allowLocalFallback && ["localhost", "127.0.0.1"].includes(destination.hostname)) {
+  const isEquivalentLoopbackOrigin =
+    ["localhost", "127.0.0.1"].includes(destination.hostname) && destination.port === base.port;
+  if (allowLocalFallback && (destination.origin === base.origin || isEquivalentLoopbackOrigin)) {
     assert.equal(destination.pathname, "/modelle-webcam/");
+    assert.equal(destination.search, "", `${path} local fallback must not contain query parameters`);
+    assert.equal(destination.hash, "", `${path} local fallback must not contain a fragment`);
     return { destination, outbound: false };
   }
   assert.equal(destination.searchParams.get("source"), "modellewebcam", `${path} is missing source`);
@@ -23,11 +28,15 @@ const home = await (await fetch(new URL("/", baseUrl))).text();
 const modelHref = home.match(/href="(\/go\/model\?[^" ]+)"/)?.[1]?.replaceAll("&amp;", "&");
 assert(modelHref, "Homepage did not render a model redirect link");
 
-const destinations = [
-  await redirect("/go/live?track=mw_hub", "mw_hub", true),
-  await redirect("/go/model-signup?track=mw_creator_model", "mw_creator_model"),
-  await redirect(modelHref, "mw_home"),
-];
+const liveDestination = await redirect("/go/live?track=mw_hub", "mw_hub", true);
+const signupDestination = await redirect("/go/model-signup?track=mw_creator_model", "mw_creator_model");
+const modelDestination = await redirect(modelHref, "mw_home", true);
+if (modelDestination.outbound) {
+  assert.equal(modelDestination.destination.protocol, "https:", "/go/model outbound destination must use HTTPS");
+  assert.match(modelDestination.destination.hostname, /(^|\.)chaturbate\.com$/i, "/go/model outbound destination must be Chaturbate");
+}
+
+const destinations = [liveDestination, signupDestination, modelDestination];
 
 const outboundDestinations = destinations.filter((result) => result.outbound).map((result) => result.destination);
 assert(outboundDestinations.length >= 2, "Creator signup and model routes should both reach an outbound destination");

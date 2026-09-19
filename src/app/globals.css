@@ -259,7 +259,7 @@ main {
 }
 
 .creator-header {
-  grid-template-columns: minmax(230px, 0.58fr) minmax(0, 1.42fr) auto;
+  grid-template-columns: minmax(230px, 0.58fr) minmax(0, 1.42fr) auto auto;
 }
 
 .creator-header .brand-mark {
@@ -275,6 +275,11 @@ main {
   padding-inline: 9px;
   font-size: 0.82rem;
   white-space: nowrap;
+}
+
+.creator-header .desktop-nav .creator-header-cta {
+  padding-inline: 14px;
+  color: #130b11;
 }
 
 .brand-mark {

@@ -23,7 +23,7 @@ export function Header() {
         ))}
       </nav>
       <Link className="header-cta" href="/diventare-webcam-model/">
-        Diventa model
+        Diventa webcam model
       </Link>
       <span className="header-age">18+</span>
       <details className="mobile-nav">
@@ -35,7 +35,7 @@ export function Header() {
             </Link>
           ))}
           <Link className="mobile-cta" href="/diventare-webcam-model/">
-            Diventa model
+            Diventa webcam model
           </Link>
         </div>
       </details>
@@ -58,7 +58,7 @@ export function CreatorHeader() {
       </Link>
       <nav className="desktop-nav creator-nav" aria-label="Navigazione guide creator">
         {creatorNavItems.map((item) => (
-          <Link href={item.href} key={item.href}>
+          <Link className={item.cta ? "header-cta creator-header-cta" : undefined} href={item.href} key={item.href}>
             {item.label}
           </Link>
         ))}
@@ -68,7 +68,7 @@ export function CreatorHeader() {
         <summary aria-label="Apri menu creator">Menu</summary>
         <div className="mobile-nav-panel">
           {creatorNavItems.map((item) => (
-            <Link href={item.href} key={item.href}>
+            <Link className={item.cta ? "mobile-cta" : undefined} href={item.href} key={item.href}>
               {item.label}
             </Link>
           ))}

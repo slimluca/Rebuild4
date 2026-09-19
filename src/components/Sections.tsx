@@ -626,8 +626,8 @@ export function CreatorBridge() {
         </div>
       </div>
       <ButtonRow
-        primaryHref="/diventare-webcam-model/"
-        primaryLabel="Scopri il percorso creator"
+        primaryHref="/go/model-signup"
+        primaryLabel="Apri il tuo profilo"
         secondaryHref="/diventare-webcam-model/"
         secondaryLabel="Scopri come iniziare"
       />
@@ -918,7 +918,7 @@ function CreatorFinalCta({ slug, track }: { slug: string; track: string }) {
       </p>
       <ButtonRow
         primaryHref={`/go/model-signup?track=${track}`}
-        primaryLabel="Valuta la candidatura"
+        primaryLabel="Apri il tuo profilo"
         secondaryHref={secondary.href}
         secondaryLabel={secondary.label}
       />
@@ -958,6 +958,9 @@ export function GuideTemplate({ page }: { page: GuidePage }) {
     ? `/go/model-signup?track=${creatorTrack}`
     : page.ctaHref;
   const heroSecondary = creatorHeroSecondary[page.slug];
+  const heroPrimaryHref = isCreatorGuide && creatorTrack ? `/go/model-signup?track=${creatorTrack}` : primaryHref;
+  const heroPrimaryLabel = isCreatorGuide ? "Apri il tuo profilo" : page.ctaLabel;
+  const showHeroActions = isCreatorGuide || Boolean(page.ctaHref && page.ctaLabel);
 
   return (
     <main className={isCreatorGuide ? "creator-guide" : undefined}>
@@ -968,10 +971,10 @@ export function GuideTemplate({ page }: { page: GuidePage }) {
           <h1>{page.title}</h1>
           <p>{page.intro}</p>
           {page.updated ? <p className="guide-updated">Ultimo aggiornamento {page.updated}</p> : null}
-          {page.ctaHref && page.ctaLabel ? (
+          {showHeroActions ? (
             <ButtonRow
-              primaryHref={primaryHref}
-              primaryLabel={page.ctaLabel}
+              primaryHref={heroPrimaryHref}
+              primaryLabel={heroPrimaryLabel}
               secondaryHref={heroSecondary?.href ?? (isAcademy ? "/modelle-webcam/" : "/academy/")}
               secondaryLabel={heroSecondary?.label ?? (isAcademy ? "Apri la pagina modelle" : "Apri academy")}
             />

@@ -7,9 +7,9 @@ export const brand = "Modelle Webcam";
 export const navItems = [
   { href: "/modelle-webcam/#online", label: "Online ora" },
   { href: "/modelle-webcam/", label: "Categorie" },
-  { href: "/diventare-webcam-model/", label: "Diventa model" },
-  { href: "/privacy-webcam-model/", label: "Privacy" },
-  { href: "/guadagni-webcam-model/", label: "Guadagni" },
+  { href: "/modelle-hd/", label: "HD" },
+  { href: "/modelle-italiane/", label: "Italiane" },
+  { href: "/nuove-modelle-webcam/", label: "Nuove" },
 ];
 
 export const academyLinks = [
@@ -22,15 +22,21 @@ export const academyLinks = [
 ];
 
 export const creatorNavItems = [
-  { href: "/diventare-webcam-model/", label: "Diventare webcam model" },
-  { href: "/diventare-camgirl/", label: "Diventare camgirl" },
-  { href: "/lavorare-in-webcam/", label: "Lavorare in webcam" },
-  { href: "/privacy-webcam-model/", label: "Privacy" },
-  { href: "/attrezzatura-webcam-model/", label: "Attrezzatura" },
-  { href: "/guadagni-webcam-model/", label: "Guadagni" },
+  { href: "/diventare-webcam-model/", label: "Come iniziare", cta: false },
+  { href: "/privacy-webcam-model/", label: "Privacy", cta: false },
+  { href: "/attrezzatura-webcam-model/", label: "Attrezzatura", cta: false },
+  { href: "/guadagni-webcam-model/", label: "Guadagni", cta: false },
+  { href: "/go/model-signup", label: "Apri il tuo profilo", cta: true },
 ] as const;
 
-export const creatorGuideSlugs = new Set(creatorNavItems.map((item) => item.href.slice(1, -1)));
+export const creatorGuideSlugs = new Set([
+  "diventare-webcam-model",
+  "diventare-camgirl",
+  "lavorare-in-webcam",
+  "privacy-webcam-model",
+  "attrezzatura-webcam-model",
+  "guadagni-webcam-model",
+]);
 
 export function isCreatorGuideSlug(slug: string): boolean {
   return creatorGuideSlugs.has(slug);

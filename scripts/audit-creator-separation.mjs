@@ -35,8 +35,9 @@ for (const path of creatorPaths) {
   assert.equal(await page.locator(".viewer-header, .viewer-footer, .platform-tabs").count(), 0, `${path} renders viewer chrome`);
   assert.equal(await page.locator(".creator-header").count(), 1, `${path} is missing the creator header`);
   assert.equal(await page.locator(".creator-footer").count(), 1, `${path} is missing the creator footer`);
-  assert.equal(await page.locator(".creator-nav a").count(), 6, `${path} should render six desktop creator links`);
-  assert.equal(await page.locator(".creator-mobile-nav a").count(), 6, `${path} should render six mobile creator links`);
+  assert.equal(await page.locator(".creator-nav a").count(), 5, `${path} should render five concise desktop creator links`);
+  assert.equal(await page.locator(".creator-mobile-nav a").count(), 5, `${path} should render five concise mobile creator links`);
+  assert.equal(await page.locator('.creator-nav a[href="/go/model-signup"]').count(), 1, `${path} is missing the creator signup CTA`);
 
   const internalHrefs = await page.locator('a[href^="/"]').evaluateAll((links) => links.map((link) => link.getAttribute("href")));
   const forbidden = internalHrefs.filter((href) => href && forbiddenCreatorDestinations.has(new URL(href, "https://modellewebcam.com").pathname));
